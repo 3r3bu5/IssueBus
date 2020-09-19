@@ -1,0 +1,1974 @@
+openapi: 3.0.0
+info:
+  title: Issue Tracker API
+  description: |-
+    Issue Tracker is an API that records issues customers/developers have experienced with a software product, and it enables support, engineers, and managers to track/assign those problems until they have been successfully resolved by the developer team.
+
+    ## Authentication
+    This API uses OAuth2 and tokens can be requested from [User Portal: Tokens](http://localhost:3000/users/login).
+  contact:
+    name: Ashraf Gehad
+    url: https://github.com/3r3bu5
+    email: deva4rf@gmail.com
+  license:
+    name: MIT
+  version: "1.0"
+servers:
+- url: http://localhost:3000
+tags:
+- name: create
+- name: get
+- name: delete
+- name: update
+paths:
+  /projects:
+    get:
+      tags:
+      - get
+      summary: Get all the information about current projects.
+      description: Get all the information about current projects.
+      operationId: get-project
+      parameters: []
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+              examples:
+                example:
+                  value:
+                    project_id: string
+                    name: string
+                    description: string
+                    version:
+                    - id: string
+                      number: 0
+                      issues:
+                      - issue_id: string
+                        name: string
+                        summary: string
+                        description: string
+                        created_at: string
+                        updated_at: string
+                        issue_type: 4
+                        issue_severity: 2
+                        issue_status: 2
+                        issue_priority: 2
+                        reporter:
+                          user_id: string
+                          name: string
+                          password: string
+                          email: string
+                          role:
+                            role_id: string
+                            name: string
+                            description: string
+                            abbr: string
+                        resolvers:
+                        - user_id: string
+                          name: string
+                          password: string
+                          email: string
+                          role:
+                            role_id: string
+                            name: string
+                            description: string
+                            abbr: string
+                        attachments:
+                        - attachment_id: string
+                          name: string
+                          owner:
+                            user_id: string
+                            name: string
+                            password: string
+                            email: string
+                            role:
+                              role_id: string
+                              name: string
+                              description: string
+                              abbr: string
+                          url: string
+                          created_at: string
+                          updated_at: string
+                        comments:
+                        - comment_id: string
+                          description: string
+                          author:
+                            user_id: string
+                            name: string
+                            password: string
+                            email: string
+                            role:
+                              role_id: string
+                              name: string
+                              description: string
+                              abbr: string
+                          created_at: string
+                          updated_at: string
+                    created_at: string
+                    updated_at: string
+                    developed_by:
+                    - user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+        "403":
+          description: Forbidden
+      x-swagger-router-controller: Get
+    post:
+      tags:
+      - create
+      summary: Post a new project.
+      description: Post a new project.
+      operationId: post-project
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+            examples:
+              example:
+                value:
+                  project_id: "22"
+                  name: ToDo List app
+                  description: this is a todo description
+                  version:
+                  - id: "33"
+                    number: 1
+                  created_at: 1/10/2020-9:00:00
+                  updated_at: 1/10/2020-10:00:00
+                  developed_by:
+                  - user_id: "235"
+                    name: Ashraf Gehad
+                    password: VeryProtectedPassword
+                    email: ashraf@gmail.com
+                    role:
+                      role_id: "23"
+                      name: Senior Developer
+                      description: to manage and develop things
+                      abbr: Sr.Dev
+      responses:
+        "201":
+          description: OK
+        "403":
+          description: Forbidden
+      x-swagger-router-controller: Create
+    delete:
+      tags:
+      - delete
+      summary: '[DANGER] Delete all projects.'
+      description: '[DANGER] Delete all projects.'
+      operationId: delete-project
+      responses:
+        "204":
+          description: OK
+        "403":
+          description: Forbidden
+      x-swagger-router-controller: Delete
+  /projects/{project_id}:
+    get:
+      tags:
+      - get
+      summary: get a specific project data.
+      description: get a specific project data.
+      operationId: get-projects
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+              examples:
+                example:
+                  value:
+                    project_id: string
+                    name: string
+                    description: string
+                    version:
+                    - id: string
+                      number: 0
+                      issues:
+                      - issue_id: string
+                        name: string
+                        summary: string
+                        description: string
+                        created_at: string
+                        updated_at: string
+                        issue_type: 1
+                        issue_severity: 0
+                        issue_status: 0
+                        issue_priority: 0
+                        reporter:
+                          user_id: string
+                          name: string
+                          password: string
+                          email: string
+                          role:
+                            role_id: string
+                            name: string
+                            description: string
+                            abbr: string
+                        resolvers:
+                        - user_id: string
+                          name: string
+                          password: string
+                          email: string
+                          role:
+                            role_id: string
+                            name: string
+                            description: string
+                            abbr: string
+                        attachments:
+                        - attachment_id: string
+                          name: string
+                          owner:
+                            user_id: string
+                            name: string
+                            password: string
+                            email: string
+                            role:
+                              role_id: string
+                              name: string
+                              description: string
+                              abbr: string
+                          url: string
+                          created_at: string
+                          updated_at: string
+                        comments:
+                        - comment_id: string
+                          description: string
+                          author:
+                            user_id: string
+                            name: string
+                            password: string
+                            email: string
+                            role:
+                              role_id: string
+                              name: string
+                              description: string
+                              abbr: string
+                          created_at: string
+                          updated_at: string
+                    created_at: string
+                    updated_at: string
+                    developed_by:
+                    - user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+      x-swagger-router-controller: Get
+    put:
+      tags:
+      - update
+      summary: Update specific project.
+      description: to update specific project.
+      operationId: put-projects-project_id
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Project'
+            examples:
+              example-1:
+                value:
+                  project_id: "22"
+                  name: ToDo List app
+                  description: this is a todo description
+                  version:
+                  - id: "31"
+                    number: 2
+                  created_at: 1/10/2020-9:00:00
+                  updated_at: 1/10/2020-10:30:00
+                  developed_by:
+                  - user_id: "235"
+                    name: Ashraf Gehad
+                    password: VeryProtectedPassword
+                    email: ashraf@gmail.com
+                    role:
+                      role_id: "23"
+                      name: Senior Developer
+                      description: to manage and develop things
+                      abbr: Sr.Dev
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+              examples:
+                example-1:
+                  value:
+                    project_id: "22"
+                    name: ToDo List app
+                    description: this is a todo description
+                    version:
+                    - id: "31"
+                      number: 2
+                    created_at: 1/10/2020-9:00:00
+                    updated_at: 1/10/2020-10:30:00
+                    developed_by:
+                    - user_id: "235"
+                      name: Ashraf Gehad
+                      password: VeryProtectedPassword
+                      email: ashraf@gmail.com
+                      role:
+                        role_id: "23"
+                        name: Senior Developer
+                        description: to manage and develop things
+                        abbr: Sr.Dev
+      x-swagger-router-controller: Update
+    delete:
+      tags:
+      - delete
+      summary: Delete a specific project.
+      description: to delete a specific project.
+      operationId: delete-projects-project_id
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: OK
+      x-swagger-router-controller: Delete
+  /projects/{project_id}/v:
+    get:
+      tags:
+      - get
+      summary: Get all project versions.
+      description: Get all project versions.
+      operationId: get-projects-version
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                example: {}
+                x-content-type: application/json
+              examples:
+                example-1:
+                  value:
+                    id: "22"
+                    number: 1
+                    issues:
+                    - issue_id: string
+                      name: string
+                      summary: string
+                      description: string
+                      created_at: string
+                      updated_at: string
+                      issue_type: 1
+                      issue_severity: 2
+                      issue_status: 3
+                      issue_priority: 1
+                      reporter:
+                        user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      resolvers:
+                      - user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      attachments:
+                      - attachment_id: string
+                        name: string
+                        owner:
+                          user_id: string
+                          name: string
+                          password: string
+                          email: string
+                          role:
+                            role_id: string
+                            name: string
+                            description: string
+                            abbr: string
+                        url: string
+                        created_at: string
+                        updated_at: string
+                      comments:
+                      - comment_id: string
+                        description: string
+                        author:
+                          user_id: string
+                          name: string
+                          password: string
+                          email: string
+                          role:
+                            role_id: string
+                            name: string
+                            description: string
+                            abbr: string
+                        created_at: string
+                        updated_at: string
+      x-swagger-router-controller: Get
+    post:
+      tags:
+      - create
+      summary: Post a new version of an existing project.
+      description: post a new version of an existing project.
+      operationId: postprojects-project_id-version
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              example-1:
+                value:
+                  number: 2.1
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                x-content-type: application/json
+              examples:
+                example-1:
+                  value:
+                    project_id: "22"
+                    name: ToDo List app
+                    description: this is a todo description
+                    version:
+                    - id: "33"
+                      number: 1
+                    - id: "44"
+                      number: 2.1
+                    created_at: 1/10/2020-9:00:00
+                    updated_at: 1/10/2020-10:00:00
+                    developed_by:
+                    - user_id: "235"
+                      name: Ashraf Gehad
+                      password: VeryProtectedPassword
+                      email: ashraf@gmail.com
+                      role:
+                        role_id: "23"
+                        name: Senior Developer
+                        description: to manage and develop things
+                        abbr: Sr.Dev
+      x-swagger-router-controller: Create
+  /projects/{project_id}/v/{version_id}:
+    get:
+      tags:
+      - get
+      summary: Get a specific version data for a specific project
+      description: Get the version data including issues.
+      operationId: get-projects-project_id-v-version_id
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of the project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of the version number of the project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                example: {}
+                x-content-type: application/json
+              examples:
+                example-1:
+                  value:
+                    id: "22"
+                    number: 1
+                    issues:
+                    - issue_id: string
+                      name: string
+                      summary: string
+                      description: string
+                      created_at: string
+                      updated_at: string
+                      issue_type: 1
+                      issue_severity: 2
+                      issue_status: 3
+                      issue_priority: 1
+                      reporter:
+                        user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      resolvers:
+                      - user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      attachments:
+                      - attachment_id: string
+                        name: string
+                        owner:
+                          user_id: string
+                          name: string
+                          password: string
+                          email: string
+                          role:
+                            role_id: string
+                            name: string
+                            description: string
+                            abbr: string
+                        url: string
+                        created_at: string
+                        updated_at: string
+                      comments:
+                      - comment_id: string
+                        description: string
+                        author:
+                          user_id: string
+                          name: string
+                          password: string
+                          email: string
+                          role:
+                            role_id: string
+                            name: string
+                            description: string
+                            abbr: string
+                        created_at: string
+                        updated_at: string
+      x-swagger-router-controller: Get
+    put:
+      tags:
+      - update
+      summary: Update a specific version data for a specific project
+      description: edit the version number.
+      operationId: put-projects-project_id-v-version_id
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of the project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of the version number of the project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              example-1:
+                value:
+                  number: 2.2
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+                example: {}
+                x-content-type: application/json
+              examples:
+                example-1:
+                  value:
+                    project_id: "22"
+                    name: ToDo List app
+                    description: this is a todo description
+                    version:
+                    - id: "33"
+                      number: 1
+                    - id: "44"
+                      number: 2.2
+                    created_at: 1/10/2020-9:00:00
+                    updated_at: 1/10/2020-10:00:00
+                    developed_by:
+                    - user_id: "235"
+                      name: Ashraf Gehad
+                      password: VeryProtectedPassword
+                      email: ashraf@gmail.com
+                      role:
+                        role_id: "23"
+                        name: Senior Developer
+                        description: to manage and develop things
+                        abbr: Sr.Dev
+      x-swagger-router-controller: Update
+    delete:
+      tags:
+      - delete
+      summary: Delete  a specific version data for a specific project
+      description: Delete a version of a specific project.
+      operationId: delete-projects-project_id-v-version_id
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of the project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of the version number of the project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: OK
+      x-swagger-router-controller: Delete
+  /projects/{project_id}/v/{version_id}/issues:
+    get:
+      tags:
+      - get
+      summary: Get all issues for a specific project version
+      operationId: get-projects-project_id-v-version_id-issues
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specifc project
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of a project version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+      x-swagger-router-controller: Get
+    post:
+      tags:
+      - create
+      summary: Post a new issue for a specific project version
+      operationId: post-projects-project_id-v-version_id-issues
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specifc project
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of a project version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            examples:
+              example-1:
+                value:
+                  issue_id: string
+                  name: string
+                  summary: string
+                  description: string
+                  created_at: string
+                  updated_at: string
+                  issue_type: 1
+                  issue_severity: 0
+                  issue_status: 0
+                  issue_priority: 0
+      responses:
+        "201":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+              examples:
+                example-1:
+                  value:
+                    issue_id: string
+                    name: string
+                    summary: string
+                    description: string
+                    created_at: string
+                    updated_at: string
+                    issue_type: 1
+                    issue_severity: 0
+                    issue_status: 0
+                    issue_priority: 0
+                    reporter:
+                      user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+                    resolvers:
+                    - user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+      x-swagger-router-controller: Create
+    delete:
+      tags:
+      - delete
+      summary: '[Danger] Delete all issues for a specific project version'
+      operationId: delete-projects-project_id-v-version_id-issues
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specifc project
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of a project version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: OK
+      x-swagger-router-controller: Delete
+  /projects/{project_id}/v/{version_id}/issues/{issue_id}:
+    get:
+      tags:
+      - get
+      summary: Get a specific issue.
+      operationId: get-projects-project_id-v-version_id-issues-issue_id
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+              examples:
+                example-1:
+                  value:
+                    issue_id: string
+                    name: string
+                    summary: string
+                    description: string
+                    created_at: string
+                    updated_at: string
+                    issue_type: 1
+                    issue_severity: 0
+                    issue_status: 0
+                    issue_priority: 0
+                    reporter:
+                      user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+                    resolvers:
+                    - user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+                    attachments:
+                    - attachment_id: string
+                      name: string
+                      owner:
+                        user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      url: string
+                      created_at: string
+                      updated_at: string
+                    comments:
+                    - comment_id: string
+                      description: string
+                      author:
+                        user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      created_at: string
+                      updated_at: string
+      x-swagger-router-controller: Get
+    put:
+      tags:
+      - update
+      summary: Edit a specific issue.
+      operationId: put-projects-project_id-v-version_id-issues-issue_id
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              example-1:
+                value:
+                  issue_id: string
+                  name: string
+                  summary: string
+                  description: string
+                  created_at: string
+                  updated_at: string
+                  issue_type: 1
+                  issue_severity: 3
+                  issue_status: 0
+                  issue_priority: 0
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Issue'
+              examples:
+                example-1:
+                  value:
+                    issue_id: string
+                    name: string
+                    summary: string
+                    description: string
+                    created_at: string
+                    updated_at: string
+                    issue_type: 1
+                    issue_severity: 3
+                    issue_status: 0
+                    issue_priority: 0
+                    reporter:
+                      user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+                    resolvers:
+                    - user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+                    attachments:
+                    - attachment_id: string
+                      name: string
+                      owner:
+                        user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      url: string
+                      created_at: string
+                      updated_at: string
+                    comments:
+                    - comment_id: string
+                      description: string
+                      author:
+                        user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      created_at: string
+                      updated_at: string
+      x-swagger-router-controller: Update
+    delete:
+      tags:
+      - delete
+      summary: Delete a specific issue.
+      operationId: delete-projects-project_id-v-version_id-issues-issue_id
+      parameters:
+      - name: project_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: OK
+      x-swagger-router-controller: Delete
+  /projects/{project_id}/v/{version_id}/issues/{issue_id}/comments:
+    get:
+      tags:
+      - get
+      summary: Get all comments of a specific issue.
+      operationId: get-projects-project_id-v-version_id-issues-issue_id-comments
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specific project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        description: the id of a specific issue.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+              examples:
+                example-1:
+                  value:
+                    comment_id: string
+                    description: string
+                    author:
+                      user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+                    created_at: string
+                    updated_at: string
+                    attachment:
+                    - attachment_id: string
+                      name: string
+                      owner:
+                        user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      url: string
+                      created_at: string
+                      updated_at: string
+      x-swagger-router-controller: Get
+    post:
+      tags:
+      - create
+      summary: Post  a new comment on a specific issue.
+      operationId: post-projects-project_id-v-version_id-issues-issue_id-comments
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specific project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        description: the id of a specific issue.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              example-1:
+                value:
+                  description: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+              examples:
+                example-1:
+                  value:
+                    comment_id: string
+                    description: string
+                    created_at: string
+                    updated_at: string
+      x-swagger-router-controller: Create
+    delete:
+      tags:
+      - delete
+      summary: Delete all comments of a specific issue.
+      operationId: delete-projects-project_id-v-version_id-issues-issue_id-comments
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specific project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        description: the id of a specific issue.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: No Content
+      x-swagger-router-controller: Delete
+  /users:
+    get:
+      tags:
+      - get
+      summary: Get all users.
+      operationId: get-users
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                example-1:
+                  value:
+                    user_id: string
+                    name: string
+                    password: string
+                    email: string
+                    role:
+                      role_id: string
+                      name: string
+                      description: string
+                      abbr: string
+      x-swagger-router-controller: Get
+    delete:
+      tags:
+      - delete
+      summary: '[DANGER] Delete all users.'
+      operationId: delete-users
+      responses:
+        "204":
+          description: OK
+      x-swagger-router-controller: Delete
+  /users/login:
+    post:
+      tags:
+      - create
+      summary: login a user.
+      operationId: post-users-login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+            examples:
+              example-1:
+                value:
+                  username: username
+                  password: password
+      responses:
+        "200":
+          description: OK
+        "403":
+          description: Created
+      x-swagger-router-controller: Create
+  /users/signup:
+    post:
+      tags:
+      - create
+      summary: Signup a new user [Admins only].
+      description: Allow only admin to signup users
+      operationId: post-users-signup
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+            examples:
+              example-1:
+                value:
+                  user_id: string
+                  name: string
+                  password: string
+                  email: string
+                  role:
+                    role_id: string
+                    name: string
+                    description: string
+                    abbr: string
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              examples:
+                example-1:
+                  value:
+                    user_id: string
+                    name: string
+                    password: string
+                    email: string
+                    role:
+                      role_id: string
+                      name: string
+                      description: string
+                      abbr: string
+      x-swagger-router-controller: Create
+  /projects/{project_id}/v/{version_id}/issues/{issue_id}/comments/{comment_id}:
+    get:
+      tags:
+      - get
+      summary: Get a specific comment.
+      operationId: get-projects-project_id-v-version_id-issues-issue_id-comments-comment_id
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specific project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of the version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        description: the id of a specific issue.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: comment_id
+        in: path
+        description: the id of the comment to be edited.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+              examples:
+                example-1:
+                  value:
+                    comment_id: string
+                    description: string
+                    author:
+                      user_id: string
+                      name: string
+                      password: string
+                      email: string
+                      role:
+                        role_id: string
+                        name: string
+                        description: string
+                        abbr: string
+                    created_at: string
+                    updated_at: string
+                    attachment:
+                    - attachment_id: string
+                      name: string
+                      owner:
+                        user_id: string
+                        name: string
+                        password: string
+                        email: string
+                        role:
+                          role_id: string
+                          name: string
+                          description: string
+                          abbr: string
+                      url: string
+                      created_at: string
+                      updated_at: string
+      x-swagger-router-controller: Get
+    put:
+      tags:
+      - update
+      summary: Update a specific comment.
+      operationId: put-projects-project_id-v-version_id-issues-issue_id-comments-comment_id
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specific project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of the version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        description: the id of a specific issue.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: comment_id
+        in: path
+        description: the id of the comment to be edited.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            examples:
+              example-1:
+                value:
+                  comment_id: string
+                  description: a new description
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comment'
+              examples:
+                example-1:
+                  value:
+                    comment_id: string
+                    description: a new description
+                    created_at: string
+                    updated_at: string
+      x-swagger-router-controller: Update
+    delete:
+      tags:
+      - delete
+      summary: Delete a specific comment.
+      operationId: delete-projects-project_id-v-version_id-issues-issue_id-comments-comment_id
+      parameters:
+      - name: project_id
+        in: path
+        description: the id of a specific project.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: version_id
+        in: path
+        description: the id of the version number.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: issue_id
+        in: path
+        description: the id of a specific issue.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: comment_id
+        in: path
+        description: the id of the comment to be edited.
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "204":
+          description: OK
+      x-swagger-router-controller: Delete
+components:
+  schemas:
+    Project:
+      title: Project
+      required:
+      - created_at
+      - description
+      - developed_by
+      - name
+      - project_id
+      - updated_at
+      - version
+      type: object
+      properties:
+        project_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        version:
+          uniqueItems: true
+          type: array
+          items: {}
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        developed_by:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+      description: the model that handles projects.
+      example:
+        developed_by:
+        - password: password
+          role:
+            role_id: role_id
+            name: name
+            description: description
+            abbr: abbr
+          user_id: user_id
+          name: name
+          email: email
+        - password: password
+          role:
+            role_id: role_id
+            name: name
+            description: description
+            abbr: abbr
+          user_id: user_id
+          name: name
+          email: email
+        updated_at: updated_at
+        project_id: project_id
+        name: name
+        description: description
+        created_at: created_at
+        version:
+        - ""
+        - ""
+      x-examples:
+        example:
+          project_id: "22"
+          name: ToDo List app
+          description: this is a todo description
+          version:
+            id: "33"
+            number: 1
+          created_at: 1/10/2020-9:00:00
+          updated_at: 1/10/2020-10:00:00
+          developed_by:
+          - user_id: "235"
+            name: Ashraf Gehad
+            password: VeryProtectedPassword
+            email: ashraf@gmail.com
+            role:
+              id: "23"
+              name: Senior Developer
+              description: to manage and develop things
+              abbr: Sr.Dev
+        example-2:
+          project_id: string
+          name: string
+          description: string
+          version: []
+          created_at: string
+          updated_at: string
+          developed_by:
+          - user_id: string
+            name: string
+            password: string
+            email: string
+            role:
+              role_id: string
+              name: string
+              description: string
+              abbr: string
+    User:
+      title: User
+      required:
+      - email
+      - name
+      - password
+      - role
+      - user_id
+      type: object
+      properties:
+        user_id:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        role:
+          $ref: '#/components/schemas/Role'
+      example:
+        password: password
+        role:
+          role_id: role_id
+          name: name
+          description: description
+          abbr: abbr
+        user_id: user_id
+        name: name
+        email: email
+      x-examples:
+        example:
+          id: "235"
+          name: Ashraf Gehad
+          password: VeryProtectedPassword
+          email: ashraf@gmail.com
+          role:
+            id: "23"
+            name: Senior Developer
+            description: to manage and develop things
+            abbr: Sr.Dev
+    Role:
+      title: Role
+      required:
+      - description
+      - name
+      - role_id
+      type: object
+      properties:
+        role_id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        abbr:
+          type: string
+      example:
+        role_id: role_id
+        name: name
+        description: description
+        abbr: abbr
+      x-examples:
+        example:
+          id: "23"
+          name: Senior Developer
+          description: to manage and develop things
+          abbr: Sr.Dev
+    Issue:
+      title: Issue
+      required:
+      - created_at
+      - description
+      - issue_id
+      - issue_priority
+      - issue_severity
+      - issue_status
+      - issue_type
+      - name
+      - reporter
+      - resolvers
+      - summary
+      - updated_at
+      type: object
+      properties:
+        issue_id:
+          type: string
+        name:
+          type: string
+        summary:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        issue_type:
+          maximum: 5
+          exclusiveMaximum: false
+          minimum: 1
+          exclusiveMinimum: false
+          type: number
+          format: float
+          default: 1
+        issue_severity:
+          type: number
+        issue_status:
+          type: number
+        issue_priority:
+          type: number
+        reporter:
+          $ref: '#/components/schemas/User'
+        resolvers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        attachments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+        comments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Comment'
+      example:
+        summary: summary
+        issue_severity: 6.02745618307040320615897144307382404804229736328125
+        resolvers:
+        - null
+        - null
+        attachments:
+        - owner: null
+          updated_at: updated_at
+          attachment_id: attachment_id
+          name: name
+          created_at: created_at
+          url: url
+        - owner: null
+          updated_at: updated_at
+          attachment_id: attachment_id
+          name: name
+          created_at: created_at
+          url: url
+        comments:
+        - updated_at: updated_at
+          attachment:
+          - null
+          - null
+          author: null
+          description: description
+          created_at: created_at
+          comment_id: comment_id
+        - updated_at: updated_at
+          attachment:
+          - null
+          - null
+          author: null
+          description: description
+          created_at: created_at
+          comment_id: comment_id
+        issue_id: issue_id
+        issue_priority: 5.962133916683182377482808078639209270477294921875
+        issue_type: 1.3203313
+        description: description
+        created_at: created_at
+        issue_status: 1.46581298050294517310021547018550336360931396484375
+        reporter:
+          password: password
+          role:
+            role_id: role_id
+            name: name
+            description: description
+            abbr: abbr
+          user_id: user_id
+          name: name
+          email: email
+        updated_at: updated_at
+        name: name
+      x-examples:
+        example:
+          issue_id: string
+          name: string
+          summary: string
+          description: string
+          created_at: string
+          updated_at: string
+          issue_type: 1
+          issue_severity: 2
+          issue_status: 3
+          issue_priority: 1
+          reporter:
+            user_id: string
+            name: string
+            password: string
+            email: string
+            role:
+              role_id: string
+              name: string
+              description: string
+              abbr: string
+          resolvers:
+          - user_id: string
+            name: string
+            password: string
+            email: string
+            role:
+              role_id: string
+              name: string
+              description: string
+              abbr: string
+          attachments:
+          - attachment_id: string
+            name: string
+            owner:
+              user_id: string
+              name: string
+              password: string
+              email: string
+              role:
+                role_id: string
+                name: string
+                description: string
+                abbr: string
+            url: string
+            created_at: string
+            updated_at: string
+          comments:
+          - comment_id: string
+            description: string
+            author:
+              user_id: string
+              name: string
+              password: string
+              email: string
+              role:
+                role_id: string
+                name: string
+                description: string
+                abbr: string
+            created_at: string
+            updated_at: string
+    Attachment:
+      title: Attachment
+      required:
+      - attachment_id
+      - created_at
+      - name
+      - owner
+      - updated_at
+      - url
+      type: object
+      properties:
+        attachment_id:
+          type: string
+        name:
+          type: string
+        owner:
+          $ref: '#/components/schemas/User'
+        url:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+      example:
+        owner: null
+        updated_at: updated_at
+        attachment_id: attachment_id
+        name: name
+        created_at: created_at
+        url: url
+      x-examples:
+        example:
+          attachment_id: string
+          name: string
+          owner:
+            user_id: string
+            name: string
+            password: string
+            email: string
+            role:
+              role_id: string
+              name: string
+              description: string
+              abbr: string
+          url: string
+          created_at: string
+          updated_at: string
+    Comment:
+      title: Comment
+      required:
+      - comment_id
+      - created_at
+      - description
+      - updated_at
+      type: object
+      properties:
+        comment_id:
+          type: string
+        description:
+          type: string
+        author:
+          $ref: '#/components/schemas/User'
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        attachment:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
+      example:
+        updated_at: updated_at
+        attachment:
+        - null
+        - null
+        author: null
+        description: description
+        created_at: created_at
+        comment_id: comment_id
+  securitySchemes:
+    token:
+      type: apiKey
+      name: API-token
+      in: header

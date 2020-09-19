@@ -1,0 +1,20 @@
+{
+  "name": "issue-tracker-api",
+  "version": "1.0",
+  "description": "Issue Tracker is an API that records issues customers/developers have experienced with a software product, and it enables support, engineers, and managers to track/assign those problems until they have been successfully resolved by the developer team.  ## Authentication This API uses OAuth2 and tokens can be requested from [User Portal: Tokens](http://localhost:3000/users/login).",
+  "main": "index.js",
+  "scripts": {
+	"prestart": "npm install",
+	"start": "node index.js"
+  },
+  "keywords": [
+    "swagger"
+  ],
+  "license": "Unlicense",
+  "private": true,
+  "dependencies": {
+    "connect": "^3.2.0",
+    "js-yaml": "^3.3.0",
+    "oas3-tools": "^2.0.2"
+  }
+}
