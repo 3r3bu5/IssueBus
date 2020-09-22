@@ -1583,7 +1583,8 @@ components:
       description: the model that handles projects.
       example:
         developed_by:
-        - password: password
+        - image: image
+          password: password
           role:
             role_id: role_id
             name: name
@@ -1592,7 +1593,8 @@ components:
           user_id: user_id
           name: name
           email: email
-        - password: password
+        - image: image
+          password: password
           role:
             role_id: role_id
             name: name
@@ -1664,9 +1666,12 @@ components:
           type: string
         email:
           type: string
+        image:
+          type: string
         role:
           $ref: '#/components/schemas/Role'
       example:
+        image: image
         password: password
         role:
           role_id: role_id
@@ -1814,6 +1819,7 @@ components:
         created_at: created_at
         issue_status: 1.46581298050294517310021547018550336360931396484375
         reporter:
+          image: image
           password: password
           role:
             role_id: role_id
