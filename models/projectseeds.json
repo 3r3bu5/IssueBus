@@ -1,0 +1,7 @@
+{
+    "name": "IssueBus",
+    "description": "Issue Tracker is an API that records issues customers/developers have experienced with a software product, and it enables support, engineers, and managers to track/assign those problems until they have been successfully resolved by the developer team.",
+    "version": [{
+        "number" : "1.0"
+    }]
+}

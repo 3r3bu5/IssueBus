@@ -1,0 +1,9 @@
+[{
+    "name": "Developers",
+    "description": "Developers will be responsible to work on Issues",
+    "abbr": "Dev"
+}, {
+    "name": "Admins",
+    "description": "Admins will handle assign users to issues",
+    "abbr": "Adm"
+}]

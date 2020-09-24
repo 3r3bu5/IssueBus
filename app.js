@@ -8,7 +8,7 @@ const mongoose = require( "mongoose" );
 
 // MongoDB connection 
 
-mongoose.connect( config.DBUrl, { useNewUrlParser: true , useUnifiedTopology: true  } )
+mongoose.connect( config.DBUrl, { useNewUrlParser: true , useUnifiedTopology: true, useCreateIndex:true } )
 	.then( console.log( "Connected to the DB server Successfully!" ) )
 	.catch( ( err ) => console.log( err ) );
 
@@ -16,6 +16,10 @@ mongoose.connect( config.DBUrl, { useNewUrlParser: true , useUnifiedTopology: tr
 var indexRouter = require( "./routes/index" );
 var usersRouter = require( "./routes/users" );
 const projectRouter = require( "./routes/projectRouter" );
+const issueRouter = require( "./routes/issueRouter" );
+const roleRouter = require( "./routes/roleRouter" );
+
+
 
 var app = express();
 
@@ -34,6 +38,10 @@ app.use( express.static( path.join( __dirname, "public" ) ) );
 app.use( "/", indexRouter );
 app.use( "/users", usersRouter );
 app.use( "/projects", projectRouter );
+app.use( "/issues", issueRouter );
+app.use( "/roles", roleRouter );
+
+
 
 
 // catch 404 and forward to error handler

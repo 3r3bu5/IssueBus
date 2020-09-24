@@ -1,11 +1,10 @@
 const mongoose = require( "mongoose" );
 const { v4: uuidv4 } = require( "uuid" );
 
-console.log( uuidv4() );
 
 
 const projectSchema = new mongoose.Schema( {
-	_id: { type: String, default: uuidv4() },
+	_id: { type: String, default: uuidv4 },
 	name: {
 		type: String,
 		required: true,

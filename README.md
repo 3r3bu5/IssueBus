@@ -63,14 +63,15 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 ##### Functional
 ###### Models
 - [x] ProjectModel
-- [ ] IssueModel
-- [ ] RoleModel
+- [x] IssueModel
+- [x] RoleModel
 - [ ] UserModel
 - [ ] AttachmentModel
 - [ ] CommentModel
 ###### Routers
 - [x] ProjectRouter
-- [ ] IssueRouter
+- [x] IssueRouter
+- [x] RoleRouter
 - [ ] UserRouter
 - [ ] CommentRouter
 ###### Views
@@ -85,6 +86,7 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 ###### Global
 - [ ] CORS
 - [ ] Upload Users' photos to AWS instead of local storage.
+- [ ] Use statastics charts 
 - [x] Use UUID to generate random Ids instead of node default objectId
 
 
