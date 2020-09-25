@@ -5,7 +5,7 @@ const router = express.Router();
 
 // require models
 
-const Role = require( "../models/roleModel" );
+const  Role  = require( "../models/roleModel" );
 
 //app configuration
 router.use( express.json() );

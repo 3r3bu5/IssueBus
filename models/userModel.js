@@ -2,27 +2,37 @@ const mongoose = require( "mongoose" );
 const { v4: uuidv4 } = require( "uuid" );
 
 
-const RoleSchema = new mongoose.Schema( {
+const UserSchema = new mongoose.Schema( {
 	_id: { type: String, default: uuidv4 },
 	name: {
 		type: String,
 		required: true,
-		unique: true
 	},
-	description: {
+	password: {
+		type: String,
+		required: true,
+	},
+	email: {
 		type: String,
 		required: true,
 		unique: true
 	},
-	abbr: {
+	image:{
 		type: String,
+		unique: true
 	},
+	role: { 
+		type: mongoose.Schema.Types.String,
+		ref: "role"
+	}
 	
+
 } , { timestamps: true } );
 
 
 
 
-const Role = mongoose.model( "role", RoleSchema );
+const User = mongoose.model( "user", UserSchema );
 
-module.exports = Role;
+module.exports = User;
+

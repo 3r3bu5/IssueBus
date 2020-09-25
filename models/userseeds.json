@@ -1,0 +1,29 @@
+[
+    {
+        "name": "Omar Hamed",
+        "email": "omar@gmail.com",
+        "password": "thisistheSECONDpassword",
+        "role": ""
+    }
+
+
+  ,
+
+  {
+    "name": "Omar Moaz",
+    "email": "MOAZ@gmail.com",
+    "password": "thisistheSECONDpassword",
+    "role": ""
+  }
+
+,
+
+
+  {
+    "name": "Ashraf Gehad",
+    "email": "ashraf@gmail.com",
+    "password": "thisisthepassword",
+    "role": ""
+  }
+      
+]

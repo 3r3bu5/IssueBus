@@ -5,7 +5,7 @@ const router = express.Router();
 
 // require models
 
-const Issue = require( "../models/issueModel" );
+const { Issue } = require( "../models/issueModel" );
 
 //app configuration
 router.use( express.json() );
@@ -24,7 +24,7 @@ router.use( express.urlencoded( { extended: false } ) );
 */
 router.route( "/" )
 	.get( ( req,res,next ) => {
-		Issue.find()
+		Issue.find( {} )
 			.then( ( Issues ) => {
 				res.status( 200 );
 				res.setHeader( "Content-Type","application/json" );

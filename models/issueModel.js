@@ -2,6 +2,38 @@ const mongoose = require( "mongoose" );
 const { v4: uuidv4 } = require( "uuid" );
 
 
+var attachmentSchema = new mongoose.Schema( {
+	_id: { type: String, default: uuidv4 },
+	title:  {
+		type: String,
+		required: true
+	},
+	url: {
+		type: String,
+		required: true,
+		unique: true
+	}
+}, {
+	timestamps: true
+} );
+
+const Attachment = mongoose.model( "attachment", attachmentSchema );
+
+var commentSchema = new mongoose.Schema( {
+	_id: { type: String, default: uuidv4 },
+	comment:  {
+		type: String,
+		required: true },
+	author:  { 
+		type: mongoose.Schema.Types.String,
+		ref: "user" },
+	attachments: [ attachmentSchema ]
+}, {
+	timestamps: true
+} );
+
+const comment = mongoose.model( "comment", commentSchema );
+
 
 const IssueSchema = new mongoose.Schema( {
 	_id: { type: String, default: uuidv4 },
@@ -44,21 +76,15 @@ const IssueSchema = new mongoose.Schema( {
 		max:5,
 		required: true
 	},
-	reporter: {
-		type: String,
-		required: true,
-	},
+	reporter: { 
+		type: mongoose.Schema.Types.String,
+		ref: "user" },
 	resolvers: [ {
-		type: String,
-		required: true,
+		type: mongoose.Schema.Types.String,
+		ref: "user"
 	} ],
-	attachments: [ {
-		type: String,
-	} ],
-	comments: [ {
-		type: String,
-		required: true,
-	} ]
+	attachments: [ attachmentSchema ],
+	comments: [ commentSchema ]
 
 } , { timestamps: true } );
 
@@ -67,4 +93,7 @@ const IssueSchema = new mongoose.Schema( {
 
 const Issue = mongoose.model( "issue", IssueSchema );
 
-module.exports = Issue;
+module.exports = {
+	Issue,
+	comment,
+	Attachment };

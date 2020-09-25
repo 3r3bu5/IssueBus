@@ -65,15 +65,16 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 - [x] ProjectModel
 - [x] IssueModel
 - [x] RoleModel
-- [ ] UserModel
-- [ ] AttachmentModel
-- [ ] CommentModel
+- [x] UserModel
+- [x] AttachmentModel
+- [x] CommentModel
 ###### Routers
 - [x] ProjectRouter
 - [x] IssueRouter
 - [x] RoleRouter
-- [ ] UserRouter
+- [x] UserRouter
 - [ ] CommentRouter
+- [ ] UploadRouter
 ###### Views
 - [ ] ProjectView
 - [ ] IssueView
