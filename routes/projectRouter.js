@@ -3,6 +3,10 @@
 const express = require( "express" );
 const router = express.Router();
 
+// issueRouter
+const issueRouter = require( "./issueRouter" );
+
+
 // require models
 
 const project = require( "../models/projectModel" );
@@ -10,8 +14,7 @@ const project = require( "../models/projectModel" );
 //app configuration
 router.use( express.json() );
 router.use( express.urlencoded( { extended: false } ) );
-
-
+router.use( "/:projectId/issues", issueRouter );
 
 /*
 @Route      >    METHOD /projects
@@ -25,6 +28,8 @@ router.use( express.urlencoded( { extended: false } ) );
 router.route( "/" )
 	.get( ( req,res,next ) => {
 		project.find()
+			.populate("versions.issues")
+			.populate( "versions.developers" ,  " _id name email " )
 			.then( ( projects ) => {
 				res.status( 200 );
 				res.setHeader( "Content-Type","application/json" );

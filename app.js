@@ -15,7 +15,6 @@ mongoose.connect( config.DBUrl, { useNewUrlParser: true , useUnifiedTopology: tr
 // Routers
 var indexRouter = require( "./routes/index" );
 const projectRouter = require( "./routes/projectRouter" );
-const issueRouter = require( "./routes/issueRouter" );
 const roleRouter = require( "./routes/roleRouter" );
 const userRouter = require( "./routes/userRouter" );
 
@@ -39,7 +38,6 @@ app.use( express.static( path.join( __dirname, "public" ) ) );
 app.use( "/", indexRouter );
 app.use( "/users", userRouter );
 app.use( "/projects", projectRouter );
-app.use( "/issues", issueRouter );
 app.use( "/roles", roleRouter );
 app.use( "/roles", roleRouter );
 

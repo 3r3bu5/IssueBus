@@ -70,10 +70,11 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 - [x] CommentModel
 ###### Routers
 - [x] ProjectRouter
+- [ ] VersionRouter
 - [x] IssueRouter
 - [x] RoleRouter
 - [x] UserRouter
-- [ ] CommentRouter
+- [x] CommentRouter
 - [ ] UploadRouter
 ###### Views
 - [ ] ProjectView

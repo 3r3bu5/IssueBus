@@ -96,4 +96,5 @@ const Issue = mongoose.model( "issue", IssueSchema );
 module.exports = {
 	Issue,
 	comment,
+	IssueSchema,
 	Attachment };

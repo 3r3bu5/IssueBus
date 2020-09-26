@@ -1,6 +1,9 @@
 const mongoose = require( "mongoose" );
 const { v4: uuidv4 } = require( "uuid" );
 
+// issueSchema
+
+const { IssueSchema } = require( "./issueModel" );
 
 
 const projectSchema = new mongoose.Schema( {
@@ -16,10 +19,7 @@ const projectSchema = new mongoose.Schema( {
 			type: String,
 			required: true,
 		},
-		issues: [ {
-			type: mongoose.Schema.Types.String,
-			ref: "issue"
-		} ],
+		issues: [ IssueSchema ],
 		developers: [ {
 			type: mongoose.Schema.Types.String,
 			ref: "user",
