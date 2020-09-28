@@ -1,5 +1,6 @@
 module.exports = {
 
-	DBUrl : "DB URL"
+	DBUrl : "DB URL",
+	JWTsecret: "JWT SECRET GOES HERE"
 
 };

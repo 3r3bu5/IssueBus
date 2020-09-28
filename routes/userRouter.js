@@ -3,6 +3,10 @@
 const express = require( "express" );
 const router = express.Router();
 
+// AUTHENTICATION 
+const authenticate = require( "../middlewares/authenticate" );
+const passport = require( "passport" );
+
 // require models
 
 const User  = require( "../models/userModel" );
@@ -67,7 +71,7 @@ router.route( "/" )
                  Admin to edit the User /
                  Admin to DELETE the User
 */
-router.route( "/:UserId" )
+router.route( "/manage/:UserId" )
 	.get( ( req,res,next ) => {
 		User.findById( req.params.UserId )
 			.populate( "role" , "_id name description abbr" )
@@ -116,5 +120,45 @@ router.route( "/:UserId" )
 			.catch( ( err ) => next( err ) );
 		
 	} );
+
+router.post( "/signup",  ( req, res, next ) => {
+	User.register( new User( {  email:req.body.email ,name :req.body.name , role : req.body.role , } ), 
+		req.body.password, ( err, user ) => {
+			if( err ) {
+				console.log( req.body.username , req.body.password );
+				res.statusCode = 500;
+				res.setHeader( "Content-Type", "application/json" );
+				res.json( { err: err } );
+			}
+			else {	
+				user.image = req.body.image;
+				user.save( ( err, user ) => {
+					if ( err ) {
+						console.log( "is it here ?" );
+						res.statusCode = 500;
+						res.setHeader( "Content-Type", "application/json" );
+						res.json( { err: err } );
+						return ;
+					}
+					
+					res.statusCode = 200;
+					res.setHeader( "Content-Type", "application/json" );
+					res.json( { success: true, status: "Registration Successful!" } );
+					
+				} );
+			}
+		} );
+} );
+
+router.post( "/login",  passport.authenticate( "local" ) ,( req, res, next ) => {	
+
+	console.log( req.user._id );   
+	var token = authenticate.getToken( { _id: req.user._id } );
+	res.status( 200 );
+	res.setHeader( "Content-Type", "application/json" );
+	res.json( { status: true  , token: token , message: "Logged-In Successful!" } );
+	
+} );
+
 
 module.exports = router;

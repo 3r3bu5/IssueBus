@@ -1,14 +1,12 @@
 const mongoose = require( "mongoose" );
 const { v4: uuidv4 } = require( "uuid" );
 
+var passportLocalMongoose = require( "passport-local-mongoose" ); 
+
 
 const UserSchema = new mongoose.Schema( {
 	_id: { type: String, default: uuidv4 },
 	name: {
-		type: String,
-		required: true,
-	},
-	password: {
 		type: String,
 		required: true,
 	},
@@ -32,6 +30,8 @@ const UserSchema = new mongoose.Schema( {
 	
 
 } , { timestamps: true } );
+
+UserSchema.plugin( passportLocalMongoose ,{ usernameField : "email" } ); 
 
 
 

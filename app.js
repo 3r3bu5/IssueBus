@@ -4,6 +4,7 @@ var path = require( "path" );
 var cookieParser = require( "cookie-parser" );
 var logger = require( "morgan" );
 const config = require( "./config" );
+const passport = require("passport");
 const mongoose = require( "mongoose" );
 
 // MongoDB connection 
@@ -11,6 +12,9 @@ const mongoose = require( "mongoose" );
 mongoose.connect( config.DBUrl, { useNewUrlParser: true , useUnifiedTopology: true, useCreateIndex:true } )
 	.then( console.log( "Connected to the DB server Successfully!" ) )
 	.catch( ( err ) => console.log( err ) );
+
+
+//
 
 // Routers
 var indexRouter = require( "./routes/index" );
@@ -33,7 +37,9 @@ app.use( express.json() );
 app.use( express.urlencoded( { extended: false } ) );
 app.use( cookieParser() );
 app.use( express.static( path.join( __dirname, "public" ) ) );
-
+// passport initilaize
+app.use(passport.initialize());
+app.use(passport.session());
 // Routes
 app.use( "/", indexRouter );
 app.use( "/users", userRouter );
