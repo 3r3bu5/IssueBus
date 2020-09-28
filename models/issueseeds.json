@@ -1,4 +1,5 @@
-[{
+[
+    {
     "name": "First Issue",
     "description": "An aggressive description",
     "summary": "Short description",
@@ -6,11 +7,10 @@
     "issue_severity" : 2,
     "issue_status" : 2,
     "issue_priority" : 2,
-    "reporter" : "Ashraf Gehad",
-    "resolvers" : [
-        "OmarHamed",
-         "OmarMoaz"]
-},
+    "reporter" : "",
+    "resolvers" : ["" , ""]
+    }
+,
 {
     "name": "Second Issue",
     "description": "Easy description",

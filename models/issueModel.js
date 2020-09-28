@@ -11,7 +11,6 @@ var attachmentSchema = new mongoose.Schema( {
 	url: {
 		type: String,
 		required: true,
-		unique: true
 	}
 }, {
 	timestamps: true
@@ -25,6 +24,7 @@ var commentSchema = new mongoose.Schema( {
 		type: String,
 		required: true },
 	author:  { 
+		required: true,
 		type: mongoose.Schema.Types.String,
 		ref: "user" },
 	attachments: [ attachmentSchema ]
@@ -40,17 +40,14 @@ const IssueSchema = new mongoose.Schema( {
 	name: {
 		type: String,
 		required: true,
-		unique: true
 	},
 	description: {
 		type: String,
 		required: true,
-		unique: true
 	},
 	summary: {
 		type: String,
 		required: true,
-		unique: true
 	},
 	issue_type: {
 		type:Number,
@@ -77,6 +74,7 @@ const IssueSchema = new mongoose.Schema( {
 		required: true
 	},
 	reporter: { 
+		required:true,
 		type: mongoose.Schema.Types.String,
 		ref: "user" },
 	resolvers: [ {

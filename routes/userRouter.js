@@ -25,6 +25,8 @@ router.use( express.urlencoded( { extended: false } ) );
 router.route( "/" )
 	.get( ( req,res,next ) => {
 		User.find()
+			.populate( "role" , "_id name description abbr" )
+			.select( "-password -createdAt -updatedAt -__v" )
 			.then( ( Users ) => {
 				res.status( 200 );
 				res.setHeader( "Content-Type","application/json" );
@@ -68,6 +70,8 @@ router.route( "/" )
 router.route( "/:UserId" )
 	.get( ( req,res,next ) => {
 		User.findById( req.params.UserId )
+			.populate( "role" , "_id name description abbr" )
+			.select( "-password -createdAt -updatedAt -__v" )
 			.then( ( User ) => {
 				if ( User != null ) {
 					res.status( 200 );

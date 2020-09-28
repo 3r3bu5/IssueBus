@@ -21,6 +21,7 @@ const projectSchema = new mongoose.Schema( {
 		},
 		issues: [ IssueSchema ],
 		developers: [ {
+			required: true,
 			type: mongoose.Schema.Types.String,
 			ref: "user",
 		} ]
@@ -32,4 +33,4 @@ const projectSchema = new mongoose.Schema( {
 
 const project = mongoose.model( "project", projectSchema );
 
-module.exports = project;
+module.exports = { project, projectSchema };

@@ -17,9 +17,13 @@ const UserSchema = new mongoose.Schema( {
 		required: true,
 		unique: true
 	},
+	superuser:{
+		type: Boolean,
+		default: false
+	},
 	image:{
 		type: String,
-		unique: true
+		default: "/public/default.png"
 	},
 	role: { 
 		type: mongoose.Schema.Types.String,

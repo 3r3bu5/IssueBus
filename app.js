@@ -39,7 +39,6 @@ app.use( "/", indexRouter );
 app.use( "/users", userRouter );
 app.use( "/projects", projectRouter );
 app.use( "/roles", roleRouter );
-app.use( "/roles", roleRouter );
 
 
 

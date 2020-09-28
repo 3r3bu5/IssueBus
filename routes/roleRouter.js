@@ -86,7 +86,7 @@ router.route( "/:RoleId" )
 		
 	} )
 	.put( ( req,res,next ) => {
-		Role.findByIdAndUpdate( req.params.RoleId,
+		Role.findById( req.params.RoleId,
 			{ $set : req.body } 
 			, { new : true } )
 			.then( ( Role ) => {

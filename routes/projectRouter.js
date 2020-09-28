@@ -4,18 +4,14 @@
 const express = require( "express" );
 const router = express.Router();
 
-// issueRouter
-const issueRouter = require( "./issueRouter" );
-
 
 // require models
 
-const project = require( "../models/projectModel" );
+const { project } = require( "../models/projectModel" );
 
 //app configuration
 router.use( express.json() );
 router.use( express.urlencoded( { extended: false } ) );
-router.use( "/:projectId/issues", issueRouter );
 
 /*
 @Route      >    METHOD /projects
@@ -73,108 +69,8 @@ router.route( "/" )
 router.route( "/:projectId" )
 	.get( ( req,res,next ) => {
 		project.findById( req.params.projectId )
-			.then( ( project ) => {
-				if ( project != null ) {
-					res.status( 200 );
-					res.setHeader( "Content-Type","application/json" );
-					res.json( { message: "This will return that specific project " , project: project } );
-				}else {
-					err = new Error( `Project ID ${req.params.projectId} does not exist! ` );
-					err.statusCode = 404;
-					return next( err );
-				}
-			} )
-			.catch( ( err ) => next( err ) );
-	} )
-	.post( ( req,res,next ) => {
-		res.status( 405 );
-		res.json( { error: "POST Method is not allowed on /projects/projectId " } );
-		
-	} )
-	.put( ( req,res,next ) => {
-		project.findByIdAndUpdate( req.params.projectId,
-			{ $set : req.body } 
-			, { new : true } )
-			.then( ( project ) => {
-				res.status( 200 );
-				res.setHeader( "Content-Type","application/json" );
-				res.json( { message: "This will return that specific project " , project: project } );
-			} )
-			.catch( ( err ) => next( err ) );
-	} )
-	.delete( ( req,res,next ) => {
-
-		project.findByIdAndDelete( req.params.projectId )
-			.then( ( project ) => {
-
-				res.status( 200 );
-				res.setHeader( "Content-Type","application/json" );
-				res.json( { message: `DELETE the project whose Id is ${req.params.projectId} ` } );
-
-		
-			}, ( err ) => next( err ) 
-			)
-			.catch( ( err ) => next( err ) );
-		
-	} );
-
-
-/*
-@Route      >    METHOD /projects
-@Behavioure >    Return all projects / 
-                 POST a new project / 
-                 Delete all projects
-@Access     >    Registered User for listing projects /
-                 Admin to POST a new project /
-                 Admin to DELETE all projects
-*/
-router.route( "/" )
-	.get( ( req,res,next ) => {
-		project.find()
 			.populate( "versions.issues" )
-			.populate( "versions.developers" ,  " _id name email " )
-			.then( ( projects ) => {
-				res.status( 200 );
-				res.setHeader( "Content-Type","application/json" );
-				res.json( { message: "This will return all projects " , projects: projects } );
-			} )
-			.catch( ( err ) => next( err ) );
-	} )
-	.post( ( req,res,next ) => {
-		project.create( req.body )
-			.then( ( project ) => {
-				res.status( 200 );
-				res.setHeader( "Content-Type","application/json" );
-				res.json( { message: "This will return the new created  project " , project: project } );
-			} )
-			.catch( ( err ) => next( err ) );
-	} )
-	.put( ( req,res,next ) => {
-		res.status( 405 );
-		res.json( { error: "PUT Method is not allowed on /projects " } );
-	} )
-	.delete( ( req,res,next ) => {
-		project.remove()
-			.then( ( projects ) => {
-				res.status( 200 );
-				res.setHeader( "Content-Type","application/json" );
-				res.json( { message: "This will the DELETE ALL CURRENT PROJECTS" , deletedProjectsInfo: projects } );
-			} )
-			.catch( ( err ) => next( err ) );
-	} );
-
-/*
-@Route      >    METHOD /projects/:projectId
-@Behavioure >    Return a specific project /
-                 Update a specific project /
-                 Delete a specific project
-@Access     >    Registered User for listing projects /
-                 Admin to edit the project /
-                 Admin to DELETE the project
-*/
-router.route( "/:projectId" )
-	.get( ( req,res,next ) => {
-		project.findById( req.params.projectId )
+			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
 			.then( ( project ) => {
 				if ( project != null ) {
 					res.status( 200 );
@@ -219,6 +115,7 @@ router.route( "/:projectId" )
 			.catch( ( err ) => next( err ) );
 		
 	} );
+
 
 /*
 @Route      >    METHOD /projects/:projectId/ver
@@ -233,6 +130,8 @@ router.route( "/:projectId" )
 router.route( "/:projectId/ver" )
 	.get( ( req,res,next ) => {
 		project.findById( req.params.projectId )
+			.populate( "versions.issues" )
+			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
 			.then( ( project ) => {
 				if ( project != null ) {
 					res.status( 200 );
@@ -312,6 +211,8 @@ router.route( "/:projectId/ver" )
 router.route( "/:projectId/ver/:versionId" )
 	.get( ( req,res,next ) => {
 		project.findById( req.params.projectId )
+			.populate( "versions.issues" )
+			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
 			.then( ( project ) => {
 				var version = project.versions.id( req.params.versionId );
 				if ( project != null && version != null ) {
@@ -321,7 +222,7 @@ router.route( "/:projectId/ver/:versionId" )
 				}
 				else if( project == null ) {
 					// eslint-disable-next-line no-undef
-					err = new Error( ` Issue Id  ${req.params.projectId} has not found!` );
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
 					// eslint-disable-next-line no-undef
 					err.status= 404 ;
 					return next( err );
@@ -415,5 +316,594 @@ router.route( "/:projectId/ver/:versionId" )
 
 			} ).catch( ( err ) => next( err ) );
 	} );
+
+
+
+/*
+@Route      >    METHOD /projects/:projectId/ver/:versionId/Issues
+@Behavioure >    Return all issues / 
+                 POST a new issue / 
+                 Delete all issues
+@Access     >    Registered User for listing issues /
+                 Registered User to POST a new issues /
+                 Admin to DELETE all issuess
+*/
+router.route( "/:projectId/ver/:versionId/issues" )
+	.get( ( req,res,next ) => {
+		project.findById( req.params.projectId )
+			.populate( "versions.issues" )
+			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				if ( project != null && version != null ) {
+					res.status( 200 );
+					res.setHeader( "Content-Type","application/json" );
+					res.json( { message: "This will return all issues of a specific project version " , issues: version.issues } );
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	} )
+	.post( ( req,res,next ) => {
+
+		project.findById( req.params.projectId )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				if ( project != null && version != null ) {
+					version.issues.push( req.body );
+					project.save()
+						.then( ( project ) => {
+							res.status( 200 );
+							res.setHeader( "Content-Type","application/json" );
+							res.json( { message: "This will create a new issues for a specific project version " , issues: version.issues } );
+						} )
+						.catch( ( err ) => next( err ) );
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	} )
+	.put( ( req,res,next ) => {
+		res.status( 405 );
+		res.json( { error: "PUT Method is not allowed on /:projectId/ver/:versionId/issues " } );
+	} )
+	.delete( ( req,res,next ) => {
+		project.findById( req.params.projectId )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				if ( project != null && version != null ) {
+					version.issues = [];
+					project.save()
+						.then( ( project ) => {
+							res.status( 200 );
+							res.setHeader( "Content-Type","application/json" );
+							res.json( { message: "This will deletea all  issues for a specific project version " , issues: version.issues } );
+						} )
+						.catch( ( err ) => next( err ) );
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	} );
+
+/*
+@Route      >   METHOD  /:projectId/ver/:versionId/issues/:issueId
+@Behavioure >   Return a specific Issue /
+				Update a specific Issue /
+			 	Delete a specific Issue
+@Access     >   Registered User for listing Issues /
+			 	Registered & assigned Users to edit the Issue /
+			 	Admin User to DELETE the Issue
+*/
+router.route( "/:projectId/ver/:versionId/issues/:issueId" )
+	.get( ( req,res,next ) => {
+		project.findById( req.params.projectId )
+			.populate( "versions.issues" )
+			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				if ( project != null && version != null & issue != null ) {
+
+					res.status( 200 );
+					res.setHeader( "Content-Type","application/json" );
+					res.json( { message: "This will return a specific  issues of a specific project version " , issue } );
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	} )
+	.post( ( req,res,next ) => {
+		res.status( 405 );
+		res.json( { error: "POST Method is not allowed on /Issues/:issueId " } );
+	
+	} )
+	.put( ( req,res,next ) => {
+
+		project.findById( req.params.projectId )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				if ( project != null && version != null & issue != null ) {
+				
+					if ( req.body.name ) {
+						issue.name = req.body.name;
+					}
+					if ( req.body.description ) {
+						issue.description = req.body.description;
+					}
+					if ( req.body.summary ) {
+						issue.summary = req.body.summary;
+					}
+					if ( req.body.issue_type ) {
+						issue.issue_type = req.body.issue_type;
+					}
+					if ( req.body.issue_severity ) {
+						issue.issue_severity = req.body.issue_severity;
+					}
+					if ( req.body.issue_status ) {
+						issue.issue_status = req.body.issue_status;
+					}
+					if ( req.body.issue_priority ) {
+						issue.issue_priority = req.body.issue_priority;
+					}
+					if ( req.body.attachments ) {
+						issue.attachments = req.body.attachments;
+					}
+					
+					project.save()
+						.then( ( project ) => {
+							res.status( 200 );
+							res.setHeader( "Content-Type","application/json" );
+							res.json( { message: "This will return a specific  issues of a specific project version " , issue } );
+						} )			
+						.catch( ( err ) => next( err ) );
+		
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	} )
+	.delete( ( req,res,next ) => {
+
+		project.findById( req.params.projectId )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				if ( project != null && version != null & issue != null ) {
+				
+					issue.remove();	
+					project.save()
+						.then( ( project ) => {
+							res.status( 200 );
+							res.setHeader( "Content-Type","application/json" );
+							res.json( { message: "This will return a specific  issues of a specific project version " , issue } );
+						} )			
+						.catch( ( err ) => next( err ) );
+		
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	
+	} );
+
+/*
+@Route      >   METHOD /Issues/:IssueId/comments
+@Behavioure >   Return a specific Issue's comments /
+			 	Post a new comment on a specific Issue /
+			 	Delete all comments on a specific Issue
+@Access     >   Registered User for listing the comments /
+			 	Registered Users to post a new  comment /
+			 	Admin to DELETE all the comments
+*/
+router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
+	.get( ( req,res,next ) => {
+		project.findById( req.params.projectId )
+			.populate( "versions.issues" )
+			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				if ( project != null && version != null & issue != null ) {
+
+					res.status( 200 );
+					res.setHeader( "Content-Type","application/json" );
+					res.json( { message: "This will return all comments on a specific issues of a specific project version " , comments: issue.comments } );
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	} )
+	.post( ( req,res,next ) => {
+		project.findById( req.params.projectId )
+			.populate( "versions.issues" )
+			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				if ( project != null && version != null & issue != null ) {
+				
+					issue.comments.push( req.body );
+
+					project.save()
+						.then( ( project ) => {
+							res.status( 200 );
+							res.setHeader( "Content-Type","application/json" );
+							res.json( { message: "This will return a specific  issues of a specific project version " , comments:issue.comments } );
+						} )			
+						.catch( ( err ) => next( err ) );
+		
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	
+	
+	} )
+	.put( ( req,res,next ) => {
+		res.status( 405 );
+		res.json( { error: "POST Method is not allowed on /Issues/:IssueId/comments " } );
+
+	} )
+	.delete( ( req,res,next ) => {
+
+		project.findById( req.params.projectId )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				if ( project != null && version != null & issue != null ) {
+				
+					issue.comments = [];
+
+					project.save()
+						.then( ( project ) => {
+							res.status( 200 );
+							res.setHeader( "Content-Type","application/json" );
+							res.json( { message: "This will deleta all comments on a specific issue of a specific project version " , comments: issue.comments } );
+						} )			
+						.catch( ( err ) => next( err ) );
+		
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				} else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	
+	
+	} );
+
+/*
+@Route      >    METHOD /Issues/:IssueId/comments/:commentId
+@Behavioure >    Return a specific Issue's comment /
+			 	 Edit a comment on a specific Issue /
+			 	 Delete a comments on a specific Issue
+@Access     >    Registered User for listing the comments /
+				 Registered Users & Owner User to edit the comment /
+				 Registered Users & Owner User to DELETE  the comment
+*/
+router.route( "/:projectId/ver/:versionId/issues/:issueId/comments/:commentId" )
+	.get( ( req,res,next ) => {
+
+		project.findById( req.params.projectId )
+			.populate( "versions.issues" )
+			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				var comment = issue.comments.id( req.params.commentId );
+				if ( project != null && version != null & issue != null & comment != null ) {
+
+					res.status( 200 );
+					res.setHeader( "Content-Type","application/json" );
+					res.json( { message: "This will return all comments on a specific issues of a specific project version " , comment } );
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+					
+				}
+				else if( comment == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` comment Id  ${req.params.commentId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	} )
+	.post( ( req,res,next ) => {
+		res.status( 405 );
+		res.json( { error: "POST Method is not allowed on /Issues/:IssueId/comments " } );
+	} )
+
+
+	.put( ( req,res,next ) => {
+		
+		project.findById( req.params.projectId )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				var comment = issue.comments.id( req.params.commentId );
+				if ( project != null && version != null & issue != null & comment != null ) {
+
+					if ( req.body.comment ){
+						comment.comment = req.body.comment;
+					}
+					if ( req.body.attachments ){
+						comment.attachments = req.body.attachments;
+					}
+					project.save()
+						.then( ( project ) => {
+							res.status( 200 );
+							res.setHeader( "Content-Type","application/json" );
+							res.json( { message: "This will return all comments on a specific issues of a specific project version " , comment } );
+						} )
+						.catch( ( err ) => next( err ) );			
+					
+				}
+				else if( project == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+					
+				}
+				else if( comment == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` comment Id  ${req.params.commentId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+					// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	} )
+	.delete( ( req,res,next ) => {
+
+		project.findById( req.params.projectId )
+			.then( ( project ) => {
+				var version = project.versions.id( req.params.versionId );
+				var issue = version.issues.id( req.params.issueId );
+				var comment = issue.comments.id( req.params.commentId );
+				if ( project != null && version != null & issue != null & comment != null ) {
+
+					comment.remove();
+					project.save()
+						.then( ( project ) => {
+							res.status( 200 );
+							res.setHeader( "Content-Type","application/json" );
+							res.json( { message: "This will return all comments on a specific issues of a specific project version " , comment } );
+						} )
+						.catch( ( err ) => next( err ) );			
+				
+				}
+				else if( project == null ) {
+				// eslint-disable-next-line no-undef
+					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				
+				}
+				else if( comment == null ) {
+				// eslint-disable-next-line no-undef
+					err = new Error( ` comment Id  ${req.params.commentId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else if( issue == null ) {
+				// eslint-disable-next-line no-undef
+					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+					// eslint-disable-next-line no-undef
+					err.status= 404 ;
+					return next( err );
+				}
+				else {
+				// eslint-disable-next-line no-undef
+					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
+			} )
+			.catch( ( err ) => next( err ) );
+	
+	} );
+
+
+
 
 module.exports = router;
