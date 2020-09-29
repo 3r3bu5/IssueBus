@@ -21,6 +21,8 @@ var indexRouter = require( "./routes/index" );
 const projectRouter = require( "./routes/projectRouter" );
 const roleRouter = require( "./routes/roleRouter" );
 const userRouter = require( "./routes/userRouter" );
+const uploadRouter = require( "./routes/uploadRouter" );
+
 
 
 
@@ -57,6 +59,9 @@ app.use( "/", indexRouter );
 app.use( "/users", userRouter );
 app.use( "/projects", projectRouter );
 app.use( "/roles", roleRouter );
+app.use( "/uploads", uploadRouter );
+
+
 
 
 

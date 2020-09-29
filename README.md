@@ -75,7 +75,7 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 - [x] RoleRouter
 - [x] UserRouter
 - [x] CommentRouter
-- [ ] UploadRouter
+- [x] UploadRouter
 ###### Views
 - [ ] ProjectView
 - [ ] IssueView
@@ -96,7 +96,7 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 ##### Non-Functional
 - [x] Enable TLS/SSL.
 - [ ] Validate the input of users
-- [ ] Use Secured Session Cookies.
+- [x] Use Secured Session Cookies.
 - [ ] Prevent Brute-Force attack againsts forms.
 - [ ] Prevent CSRF attack.
 - [x] Use HelmetJs for basic security defaults.
