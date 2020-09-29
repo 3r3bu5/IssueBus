@@ -4,6 +4,7 @@
 const express = require( "express" );
 const router = express.Router();
 const authenticate = require( "../middlewares/authenticate" );
+const cors = require( "../middlewares/cors" );
 
 
 // require models
@@ -24,7 +25,8 @@ router.use( express.urlencoded( { extended: false } ) );
                  Admin to DELETE all projects
 */
 router.route( "/" )
-	.get( authenticate.verifyUser , ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+	.get( cors.cors , authenticate.verifyUser , ( req,res,next ) => {
 		project.find()
 			.populate( "versions.issues" )
 			.populate( "versions.developers" ,  " _id name email " )
@@ -35,7 +37,7 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
+	.post(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
 		project.create( req.body )
 			.then( ( project ) => {
 				res.status( 200 );
@@ -44,11 +46,11 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.put( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.put( cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "PUT Method is not allowed on /projects " } );
 	} )
-	.delete(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		project.remove()
 			.then( ( projects ) => {
 				res.status( 200 );
@@ -68,7 +70,9 @@ router.route( "/" )
                  Admin to DELETE the project
 */
 router.route( "/:projectId" )
-	.get(  authenticate.verifyUser ,  ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser ,  ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -85,12 +89,12 @@ router.route( "/:projectId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.post(   cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /projects/projectId " } );
 		
 	} )
-	.put(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.put(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		project.findByIdAndUpdate( req.params.projectId,
 			{ $set : req.body } 
 			, { new : true } )
@@ -101,7 +105,7 @@ router.route( "/:projectId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete(  cors.corsWithOptions,  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		project.findByIdAndDelete( req.params.projectId )
 			.then( ( project ) => {
@@ -129,7 +133,9 @@ router.route( "/:projectId" )
 */
 
 router.route( "/:projectId/ver" )
-	.get(  authenticate.verifyUser , ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -146,7 +152,7 @@ router.route( "/:projectId/ver" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.post(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -170,11 +176,11 @@ router.route( "/:projectId/ver" )
 		
 		
 	} )
-	.put( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.put(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /projects/:projectId/version " } );
 	} )
-	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -209,7 +215,9 @@ router.route( "/:projectId/ver" )
 */
 
 router.route( "/:projectId/ver/:versionId" )
-	.get(  authenticate.verifyUser ,  ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser ,  ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -236,13 +244,13 @@ router.route( "/:projectId/ver/:versionId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.post(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /projects/:projectId/version/:versionId " } );
 		
 	} )
-	.put(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.put(  cors.corsWithOptions,  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
 				var version = project.versions.id( req.params.versionId );
@@ -282,7 +290,7 @@ router.route( "/:projectId/ver/:versionId" )
 			} ).catch( ( err ) => next( err ) );
 	} )
 
-	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -329,7 +337,9 @@ router.route( "/:projectId/ver/:versionId" )
                  Admin to DELETE all issuess
 */
 router.route( "/:projectId/ver/:versionId/issues" )
-	.get(  authenticate.verifyUser , ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -356,7 +366,7 @@ router.route( "/:projectId/ver/:versionId/issues" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( authenticate.verifyUser , ( req,res,next ) => {
+	.post( cors.corsWithOptions, authenticate.verifyUser , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -392,11 +402,11 @@ router.route( "/:projectId/ver/:versionId/issues" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.put(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.put(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "PUT Method is not allowed on /:projectId/ver/:versionId/issues " } );
 	} )
-	.delete(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
 				var version = project.versions.id( req.params.versionId );
@@ -438,7 +448,9 @@ router.route( "/:projectId/ver/:versionId/issues" )
 			 	Admin User to DELETE the Issue
 */
 router.route( "/:projectId/ver/:versionId/issues/:issueId" )
-	.get(  authenticate.verifyUser , ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -475,12 +487,12 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.post(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /Issues/:issueId " } );
 	
 	} )
-	.put(  authenticate.verifyUser , ( req,res,next ) => {
+	.put(  cors.corsWithOptions, authenticate.verifyUser , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -552,7 +564,7 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 			
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete(  authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
+	.delete(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -606,7 +618,9 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 			 	Admin to DELETE all the comments
 */
 router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
-	.get( authenticate.verifyUser , ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -643,7 +657,7 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( authenticate.verifyUser , ( req,res,next ) => {
+	.post(  cors.corsWithOptions, authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -691,12 +705,12 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
 	
 	
 	} )
-	.put( ( req,res,next ) => {
+	.put(  cors.corsWithOptions, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /Issues/:IssueId/comments " } );
 
 	} )
-	.delete( authenticate.verifyUser ,authenticate.verifyAdmin , ( req,res,next ) => {
+	.delete( cors.corsWithOptions, authenticate.verifyUser ,authenticate.verifyAdmin , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -752,7 +766,9 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
 				 Registered Users & Owner User to DELETE  the comment
 */
 router.route( "/:projectId/ver/:versionId/issues/:issueId/comments/:commentId" )
-	.get( authenticate.verifyUser , ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
@@ -800,13 +816,13 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments/:commentId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post(  cors.corsWithOptions, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /Issues/:IssueId/comments " } );
 	} )
 
 
-	.put( authenticate.verifyUser , ( req,res,next ) => {
+	.put( cors.corsWithOptions, authenticate.verifyUser , ( req,res,next ) => {
 		
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -871,7 +887,7 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments/:commentId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete(  cors.corsWithOptions, authenticate.verifyUser , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -931,7 +947,6 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments/:commentId" )
 			.catch( ( err ) => next( err ) );
 	
 	} );
-
 
 
 

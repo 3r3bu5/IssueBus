@@ -1,8 +1,10 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 // Reequire 
 const express = require( "express" );
 const router = express.Router();
 const authenticate = require( "../middlewares/authenticate" );
+const cors = require( "../middlewares/cors" );
 
 // require models
 
@@ -24,7 +26,9 @@ router.use( express.urlencoded( { extended: false } ) );
                  Admin to DELETE all Roles
 */
 router.route( "/" )
-	.get( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors ,authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		Role.find()
 			.then( ( Roles ) => {
 				res.status( 200 );
@@ -33,7 +37,7 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.post(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		Role.create( req.body )
 			.then( ( Role ) => {
 				res.status( 200 );
@@ -42,11 +46,11 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.put(authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.put( cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "PUT Method is not allowed on /Roles " } );
 	} )
-	.delete(authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete( cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		Role.remove()
 			.then( ( Roles ) => {
 				res.status( 200 );
@@ -66,7 +70,9 @@ router.route( "/" )
                  Admin to DELETE the Role
 */
 router.route( "/:RoleId" )
-	.get( authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
 		Role.findById( req.params.RoleId )
 			.then( ( Role ) => {
 				if ( Role != null ) {
@@ -81,12 +87,12 @@ router.route( "/:RoleId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post(authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.post( cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /Roles/RoleId " } );
 		
 	} )
-	.put( authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
+	.put(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
 		Role.findById( req.params.RoleId,
 			{ $set : req.body } 
 			, { new : true } )
@@ -97,7 +103,7 @@ router.route( "/:RoleId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		Role.findByIdAndDelete( req.params.RoleId )
 			.then( ( Role ) => {

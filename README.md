@@ -87,7 +87,7 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 - [x] Allow only comment author to edit/delete his comment.
 - [x] Allow only admin to assign users to tickets.
 ###### Global
-- [ ] CORS
+- [x] CORS
 - [ ] Upload Users' photos to AWS instead of local storage.
 - [ ] Use statastics charts 
 - [x] Use UUID to generate random Ids instead of node default objectId

@@ -3,6 +3,9 @@
 // Reequire 
 const express = require( "express" );
 const router = express.Router();
+// middlewares
+
+const cors = require( "../middlewares/cors" );
 
 // AUTHENTICATION 
 const authenticate = require( "../middlewares/authenticate" );
@@ -11,6 +14,7 @@ const passport = require( "passport" );
 // require models
 
 const User  = require( "../models/userModel" );
+
 
 //app configuration
 router.use( express.json() );
@@ -28,7 +32,9 @@ router.use( express.urlencoded( { extended: false } ) );
                  Admin to DELETE all Users
 */
 router.route( "/" )
-	.get( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		User.find()
 			.populate( "role" , "_id name description abbr" )
 			.select( "-password -createdAt -updatedAt -__v" )
@@ -39,11 +45,11 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.put( ( req,res,next ) => {
+	.put(  cors.corsWithOptions, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "PUT Method is not allowed on /Users " } );
 	} )
-	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete( cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		User.remove()
 			.then( ( Users ) => {
 				res.status( 200 );
@@ -63,7 +69,9 @@ router.route( "/" )
                  Admin to DELETE the User
 */
 router.route( "/manage/:UserId" )
-	.get( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.get( cors.cors , authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		User.findById( req.params.UserId )
 			.populate( "role" , "_id name description abbr" )
 			.select( "-password -createdAt -updatedAt -__v" )
@@ -80,12 +88,12 @@ router.route( "/manage/:UserId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post( cors.corsWithOptions, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /Users/UserId " } );
 		
 	} )
-	.put( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.put( cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		User.findByIdAndUpdate( req.params.UserId,
 			{ $set : req.body } 
 			, { new : true } )
@@ -96,7 +104,7 @@ router.route( "/manage/:UserId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.delete(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		User.findByIdAndDelete( req.params.UserId )
 			.then( ( User ) => {
@@ -112,40 +120,46 @@ router.route( "/manage/:UserId" )
 		
 	} );
 
-router.post( "/signup", authenticate.verifyUser , authenticate.verifyAdmin , ( req, res, next ) => {
-	User.register( new User( {  email:req.body.email ,name :req.body.name , role : req.body.role  } ), 
-		req.body.password, ( err, user ) => {
-			if( err ) {
-				res.statusCode = 500;
-				res.setHeader( "Content-Type", "application/json" );
-				res.json( { err: err } );
-			}
-			else {	
-				user.save( ( err, user ) => {
-					if ( err ) {
-						res.statusCode = 500;
-						res.setHeader( "Content-Type", "application/json" );
-						res.json( { err: err } );
-						return ;
-					}
-					
-					res.statusCode = 200;
+router
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.post( "/signup",  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin , ( req, res, next ) => {
+		User.register( new User( {  email:req.body.email ,name :req.body.name , role : req.body.role  } ), 
+			req.body.password, ( err, user ) => {
+				if( err ) {
+					res.statusCode = 500;
 					res.setHeader( "Content-Type", "application/json" );
-					res.json( { success: true, status: "Registration Successful!" } );
+					res.json( { err: err } );
+				}
+				else {	
+					user.save( ( err, user ) => {
+						if ( err ) {
+							res.statusCode = 500;
+							res.setHeader( "Content-Type", "application/json" );
+							res.json( { err: err } );
+							return ;
+						}
 					
-				} );
-			}
-		} );
-} );
+						res.statusCode = 200;
+						res.setHeader( "Content-Type", "application/json" );
+						res.json( { success: true, status: "Registration Successful!" } );
+					
+					} );
+				}
+			} );
+	} );
 
-router.post( "/login",  passport.authenticate( "local" ) ,( req, res, next ) => {	
+router
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
 
-	var token = authenticate.getToken( { _id: req.user._id } );
-	res.status( 200 );
-	res.setHeader( "Content-Type", "application/json" );
-	res.json( { status: true  , token: token , message: "Logged-In Successful!" } );
+	.post( "/login",   cors.corsWithOptions, passport.authenticate( "local" ) ,( req, res, next ) => {	
+
+		var token = authenticate.getToken( { _id: req.user._id } );
+		res.status( 200 );
+		res.setHeader( "Content-Type", "application/json" );
+		res.json( { status: true  , token: token , message: "Logged-In Successful!" } );
 	
-} );
+	} );
 
 
 module.exports = router;
