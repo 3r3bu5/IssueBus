@@ -82,9 +82,10 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 - [ ] UserView
 - [ ] CommentView
 ###### Authentication & Authorization , and access control
-- [ ] Allow only admins to register new users.
-- [ ] Allow only admins to create/edit/delete projects.
-- [ ] Allow only admin to assign users to tickets.
+- [x] Allow only admins to register new users.
+- [x] Allow only admins to create/edit/delete projects.
+- [x] Allow only comment author to edit/delete his comment.
+- [x] Allow only admin to assign users to tickets.
 ###### Global
 - [ ] CORS
 - [ ] Upload Users' photos to AWS instead of local storage.
@@ -94,9 +95,9 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 
 ##### Non-Functional
 - [ ] Enable TLS/SSL.
-- [ ] Validate the input of your users
+- [ ] Validate the input of users
 - [ ] Use Secured Session Cookies.
 - [ ] Prevent Brute-Force attack againsts forms.
 - [ ] Prevent CSRF attack.
-- [ ] Use HelmetJs for basic security defaults.
+- [x] Use HelmetJs for basic security defaults.
 - [ ] Add Rate Limiting (Maybe)? .

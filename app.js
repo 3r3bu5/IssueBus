@@ -4,7 +4,7 @@ var path = require( "path" );
 var cookieParser = require( "cookie-parser" );
 var logger = require( "morgan" );
 const config = require( "./config" );
-const passport = require("passport");
+const passport = require( "passport" );
 const mongoose = require( "mongoose" );
 
 // MongoDB connection 
@@ -38,8 +38,8 @@ app.use( express.urlencoded( { extended: false } ) );
 app.use( cookieParser() );
 app.use( express.static( path.join( __dirname, "public" ) ) );
 // passport initilaize
-app.use(passport.initialize());
-app.use(passport.session());
+app.use( passport.initialize() );
+app.use( passport.session() );
 // Routes
 app.use( "/", indexRouter );
 app.use( "/users", userRouter );
@@ -54,6 +54,7 @@ app.use( function( req, res, next ) {
 } );
 
 // error handler
+// eslint-disable-next-line no-unused-vars
 app.use( function( err, req, res, next ) {
 	// set locals, only providing error in development
 	res.locals.message = err.message;

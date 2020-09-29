@@ -3,6 +3,7 @@
 // Reequire 
 const express = require( "express" );
 const router = express.Router();
+const authenticate = require( "../middlewares/authenticate" );
 
 
 // require models
@@ -23,7 +24,7 @@ router.use( express.urlencoded( { extended: false } ) );
                  Admin to DELETE all projects
 */
 router.route( "/" )
-	.get( ( req,res,next ) => {
+	.get( authenticate.verifyUser , ( req,res,next ) => {
 		project.find()
 			.populate( "versions.issues" )
 			.populate( "versions.developers" ,  " _id name email " )
@@ -34,7 +35,7 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post( authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
 		project.create( req.body )
 			.then( ( project ) => {
 				res.status( 200 );
@@ -43,11 +44,11 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.put( ( req,res,next ) => {
+	.put( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "PUT Method is not allowed on /projects " } );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		project.remove()
 			.then( ( projects ) => {
 				res.status( 200 );
@@ -67,7 +68,7 @@ router.route( "/" )
                  Admin to DELETE the project
 */
 router.route( "/:projectId" )
-	.get( ( req,res,next ) => {
+	.get(  authenticate.verifyUser ,  ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -84,12 +85,12 @@ router.route( "/:projectId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /projects/projectId " } );
 		
 	} )
-	.put( ( req,res,next ) => {
+	.put(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		project.findByIdAndUpdate( req.params.projectId,
 			{ $set : req.body } 
 			, { new : true } )
@@ -100,7 +101,7 @@ router.route( "/:projectId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		project.findByIdAndDelete( req.params.projectId )
 			.then( ( project ) => {
@@ -128,7 +129,7 @@ router.route( "/:projectId" )
 */
 
 router.route( "/:projectId/ver" )
-	.get( ( req,res,next ) => {
+	.get(  authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -145,7 +146,7 @@ router.route( "/:projectId/ver" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -169,12 +170,11 @@ router.route( "/:projectId/ver" )
 		
 		
 	} )
-	.put( ( req,res,next ) => {
+	.put( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /projects/:projectId/version " } );
 	} )
-	.delete( ( req,res,next ) => {
-
+	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -209,7 +209,7 @@ router.route( "/:projectId/ver" )
 */
 
 router.route( "/:projectId/ver/:versionId" )
-	.get( ( req,res,next ) => {
+	.get(  authenticate.verifyUser ,  ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -236,13 +236,13 @@ router.route( "/:projectId/ver/:versionId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /projects/:projectId/version/:versionId " } );
 		
 	} )
-	.put( ( req,res,next ) => {
+	.put(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
 				var version = project.versions.id( req.params.versionId );
@@ -282,7 +282,7 @@ router.route( "/:projectId/ver/:versionId" )
 			} ).catch( ( err ) => next( err ) );
 	} )
 
-	.delete( ( req,res,next ) => {
+	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -329,7 +329,7 @@ router.route( "/:projectId/ver/:versionId" )
                  Admin to DELETE all issuess
 */
 router.route( "/:projectId/ver/:versionId/issues" )
-	.get( ( req,res,next ) => {
+	.get(  authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -356,12 +356,16 @@ router.route( "/:projectId/ver/:versionId/issues" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post( authenticate.verifyUser , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
 				var version = project.versions.id( req.params.versionId );
 				if ( project != null && version != null ) {
+					req.body.reporter = req.user._id;
+					if ( req.user.superuser == false ){
+						req.body.resolvers = [];
+					}
 					version.issues.push( req.body );
 					project.save()
 						.then( ( project ) => {
@@ -388,11 +392,11 @@ router.route( "/:projectId/ver/:versionId/issues" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.put( ( req,res,next ) => {
+	.put(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "PUT Method is not allowed on /:projectId/ver/:versionId/issues " } );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete(  authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
 				var version = project.versions.id( req.params.versionId );
@@ -434,7 +438,7 @@ router.route( "/:projectId/ver/:versionId/issues" )
 			 	Admin User to DELETE the Issue
 */
 router.route( "/:projectId/ver/:versionId/issues/:issueId" )
-	.get( ( req,res,next ) => {
+	.get(  authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -471,17 +475,18 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /Issues/:issueId " } );
 	
 	} )
-	.put( ( req,res,next ) => {
+	.put(  authenticate.verifyUser , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
 				var version = project.versions.id( req.params.versionId );
 				var issue = version.issues.id( req.params.issueId );
+			
 				if ( project != null && version != null & issue != null ) {
 				
 					if ( req.body.name ) {
@@ -508,7 +513,9 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 					if ( req.body.attachments ) {
 						issue.attachments = req.body.attachments;
 					}
-					
+					if ( req.user.superuser  && req.body.resolvers ){
+						issue.resolvers = req.body.resolvers  ;
+					}
 					project.save()
 						.then( ( project ) => {
 							res.status( 200 );
@@ -516,8 +523,8 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 							res.json( { message: "This will return a specific  issues of a specific project version " , issue } );
 						} )			
 						.catch( ( err ) => next( err ) );
-		
-					
+			
+						
 				}
 				else if( project == null ) {
 					// eslint-disable-next-line no-undef
@@ -539,10 +546,13 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 					// eslint-disable-next-line no-undef
 					return next( err );
 				}
+
 			} )
+		
+			
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete(  authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -555,7 +565,7 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 						.then( ( project ) => {
 							res.status( 200 );
 							res.setHeader( "Content-Type","application/json" );
-							res.json( { message: "This will return a specific  issues of a specific project version " , issue } );
+							res.json( { message: "This will remove a specific  issues of a specific project version " , issue } );
 						} )			
 						.catch( ( err ) => next( err ) );
 		
@@ -596,7 +606,7 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId" )
 			 	Admin to DELETE all the comments
 */
 router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
-	.get( ( req,res,next ) => {
+	.get( authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -633,7 +643,7 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post( authenticate.verifyUser , ( req,res,next ) => {
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
 			.populate( "versions.developers versions.issues.comments.author versions.issues.reporter versions.issues.resolvers " ,  " _id name email " )
@@ -641,7 +651,9 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
 				var version = project.versions.id( req.params.versionId );
 				var issue = version.issues.id( req.params.issueId );
 				if ( project != null && version != null & issue != null ) {
-				
+					
+					req.body.author = req.user._id;
+
 					issue.comments.push( req.body );
 
 					project.save()
@@ -684,7 +696,7 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
 		res.json( { error: "POST Method is not allowed on /Issues/:IssueId/comments " } );
 
 	} )
-	.delete( ( req,res,next ) => {
+	.delete( authenticate.verifyUser ,authenticate.verifyAdmin , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
@@ -740,7 +752,7 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments" )
 				 Registered Users & Owner User to DELETE  the comment
 */
 router.route( "/:projectId/ver/:versionId/issues/:issueId/comments/:commentId" )
-	.get( ( req,res,next ) => {
+	.get( authenticate.verifyUser , ( req,res,next ) => {
 
 		project.findById( req.params.projectId )
 			.populate( "versions.issues" )
@@ -794,55 +806,64 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments/:commentId" )
 	} )
 
 
-	.put( ( req,res,next ) => {
+	.put( authenticate.verifyUser , ( req,res,next ) => {
 		
 		project.findById( req.params.projectId )
 			.then( ( project ) => {
 				var version = project.versions.id( req.params.versionId );
 				var issue = version.issues.id( req.params.issueId );
 				var comment = issue.comments.id( req.params.commentId );
-				if ( project != null && version != null & issue != null & comment != null ) {
+				if ( comment.author.toString() == req.user._id.toString() ) {
 
-					if ( req.body.comment ){
-						comment.comment = req.body.comment;
+					if ( project != null && version != null & issue != null & comment != null ) {
+
+						if ( req.body.comment ){
+							comment.comment = req.body.comment;
+						}
+						if ( req.body.attachments ){
+							comment.attachments = req.body.attachments;
+						}
+						project.save()
+							.then( ( project ) => {
+								res.status( 200 );
+								res.setHeader( "Content-Type","application/json" );
+								res.json( { message: "This will return all comments on a specific issues of a specific project version " , comment } );
+							} )
+							.catch( ( err ) => next( err ) );			
+						
 					}
-					if ( req.body.attachments ){
-						comment.attachments = req.body.attachments;
+					else if( project == null ) {
+						// eslint-disable-next-line no-undef
+						err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+						// eslint-disable-next-line no-undef
+						err.status= 404 ;
+						return next( err );
+						
 					}
-					project.save()
-						.then( ( project ) => {
-							res.status( 200 );
-							res.setHeader( "Content-Type","application/json" );
-							res.json( { message: "This will return all comments on a specific issues of a specific project version " , comment } );
-						} )
-						.catch( ( err ) => next( err ) );			
-					
-				}
-				else if( project == null ) {
-					// eslint-disable-next-line no-undef
-					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
-					// eslint-disable-next-line no-undef
-					err.status= 404 ;
-					return next( err );
-					
-				}
-				else if( comment == null ) {
-					// eslint-disable-next-line no-undef
-					err = new Error( ` comment Id  ${req.params.commentId} has not found!` );
-					// eslint-disable-next-line no-undef
-					err.status= 404 ;
-					return next( err );
-				}
-				else if( issue == null ) {
-					// eslint-disable-next-line no-undef
-					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
-					// eslint-disable-next-line no-undef
-					err.status= 404 ;
-					return next( err );
-				}
-				else {
-					// eslint-disable-next-line no-undef
-					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+					else if( comment == null ) {
+						// eslint-disable-next-line no-undef
+						err = new Error( ` comment Id  ${req.params.commentId} has not found!` );
+						// eslint-disable-next-line no-undef
+						err.status= 404 ;
+						return next( err );
+					}
+					else if( issue == null ) {
+						// eslint-disable-next-line no-undef
+						err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+						// eslint-disable-next-line no-undef
+						err.status= 404 ;
+						return next( err );
+					}
+					else {
+						// eslint-disable-next-line no-undef
+						err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+						err.status= 404 ;
+						// eslint-disable-next-line no-undef
+						return next( err );
+					}
+
+				} else {
+					err = new Error( " You are not allowed to perform this operation " );
 					err.status= 404 ;
 					// eslint-disable-next-line no-undef
 					return next( err );
@@ -857,47 +878,55 @@ router.route( "/:projectId/ver/:versionId/issues/:issueId/comments/:commentId" )
 				var version = project.versions.id( req.params.versionId );
 				var issue = version.issues.id( req.params.issueId );
 				var comment = issue.comments.id( req.params.commentId );
-				if ( project != null && version != null & issue != null & comment != null ) {
+				if ( comment.author.toString() == req.user._id.toString() ) {
+					if ( project != null && version != null & issue != null & comment != null ) {
 
-					comment.remove();
-					project.save()
-						.then( ( project ) => {
-							res.status( 200 );
-							res.setHeader( "Content-Type","application/json" );
-							res.json( { message: "This will return all comments on a specific issues of a specific project version " , comment } );
-						} )
-						.catch( ( err ) => next( err ) );			
+						comment.remove();
+						project.save()
+							.then( ( project ) => {
+								res.status( 200 );
+								res.setHeader( "Content-Type","application/json" );
+								res.json( { message: "This will return all comments on a specific issues of a specific project version " , comment } );
+							} )
+							.catch( ( err ) => next( err ) );			
+					
+					}
+					else if( project == null ) {
+					// eslint-disable-next-line no-undef
+						err = new Error( ` project Id  ${req.params.projectId} has not found!` );
+						// eslint-disable-next-line no-undef
+						err.status= 404 ;
+						return next( err );
+					
+					}
+					else if( comment == null ) {
+					// eslint-disable-next-line no-undef
+						err = new Error( ` comment Id  ${req.params.commentId} has not found!` );
+						// eslint-disable-next-line no-undef
+						err.status= 404 ;
+						return next( err );
+					}
+					else if( issue == null ) {
+					// eslint-disable-next-line no-undef
+						err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
+						// eslint-disable-next-line no-undef
+						err.status= 404 ;
+						return next( err );
+					}
+					else {
+					// eslint-disable-next-line no-undef
+						err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
+						err.status= 404 ;
+						// eslint-disable-next-line no-undef
+						return next( err );
+					}
+				} else{
+					err = new Error( " You are not allowed to perform this operation " );
+					err.status= 404 ;
+					// eslint-disable-next-line no-undef
+					return next( err );
+				}
 				
-				}
-				else if( project == null ) {
-				// eslint-disable-next-line no-undef
-					err = new Error( ` project Id  ${req.params.projectId} has not found!` );
-					// eslint-disable-next-line no-undef
-					err.status= 404 ;
-					return next( err );
-				
-				}
-				else if( comment == null ) {
-				// eslint-disable-next-line no-undef
-					err = new Error( ` comment Id  ${req.params.commentId} has not found!` );
-					// eslint-disable-next-line no-undef
-					err.status= 404 ;
-					return next( err );
-				}
-				else if( issue == null ) {
-				// eslint-disable-next-line no-undef
-					err = new Error( ` Issue Id  ${req.params.issueId} has not found!` );
-					// eslint-disable-next-line no-undef
-					err.status= 404 ;
-					return next( err );
-				}
-				else {
-				// eslint-disable-next-line no-undef
-					err = new Error( ` version Id ${req.params.versionId} on project ${req.params.projectId} has not found!` );
-					err.status= 404 ;
-					// eslint-disable-next-line no-undef
-					return next( err );
-				}
 			} )
 			.catch( ( err ) => next( err ) );
 	

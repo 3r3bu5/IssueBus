@@ -2,6 +2,7 @@
 // Reequire 
 const express = require( "express" );
 const router = express.Router();
+const authenticate = require( "../middlewares/authenticate" );
 
 // require models
 
@@ -23,7 +24,7 @@ router.use( express.urlencoded( { extended: false } ) );
                  Admin to DELETE all Roles
 */
 router.route( "/" )
-	.get( ( req,res,next ) => {
+	.get( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		Role.find()
 			.then( ( Roles ) => {
 				res.status( 200 );
@@ -32,7 +33,7 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		Role.create( req.body )
 			.then( ( Role ) => {
 				res.status( 200 );
@@ -41,11 +42,11 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.put( ( req,res,next ) => {
+	.put(authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "PUT Method is not allowed on /Roles " } );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete(authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		Role.remove()
 			.then( ( Roles ) => {
 				res.status( 200 );
@@ -65,7 +66,7 @@ router.route( "/" )
                  Admin to DELETE the Role
 */
 router.route( "/:RoleId" )
-	.get( ( req,res,next ) => {
+	.get( authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
 		Role.findById( req.params.RoleId )
 			.then( ( Role ) => {
 				if ( Role != null ) {
@@ -80,12 +81,12 @@ router.route( "/:RoleId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
+	.post(authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "POST Method is not allowed on /Roles/RoleId " } );
 		
 	} )
-	.put( ( req,res,next ) => {
+	.put( authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
 		Role.findById( req.params.RoleId,
 			{ $set : req.body } 
 			, { new : true } )
@@ -96,7 +97,7 @@ router.route( "/:RoleId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		Role.findByIdAndDelete( req.params.RoleId )
 			.then( ( Role ) => {

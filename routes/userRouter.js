@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 // Reequire 
 const express = require( "express" );
@@ -27,7 +28,7 @@ router.use( express.urlencoded( { extended: false } ) );
                  Admin to DELETE all Users
 */
 router.route( "/" )
-	.get( ( req,res,next ) => {
+	.get( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		User.find()
 			.populate( "role" , "_id name description abbr" )
 			.select( "-password -createdAt -updatedAt -__v" )
@@ -38,21 +39,11 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post( ( req,res,next ) => {
-		req.body.email = req.body.email.toLowerCase();
-		User.create( req.body )
-			.then( ( User ) => {
-				res.status( 200 );
-				res.setHeader( "Content-Type","application/json" );
-				res.json( { message: "This will return the new created  User " , User: User } );
-			} )
-			.catch( ( err ) => next( err ) );
-	} )
 	.put( ( req,res,next ) => {
 		res.status( 405 );
 		res.json( { error: "PUT Method is not allowed on /Users " } );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		User.remove()
 			.then( ( Users ) => {
 				res.status( 200 );
@@ -72,7 +63,7 @@ router.route( "/" )
                  Admin to DELETE the User
 */
 router.route( "/manage/:UserId" )
-	.get( ( req,res,next ) => {
+	.get( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		User.findById( req.params.UserId )
 			.populate( "role" , "_id name description abbr" )
 			.select( "-password -createdAt -updatedAt -__v" )
@@ -94,7 +85,7 @@ router.route( "/manage/:UserId" )
 		res.json( { error: "POST Method is not allowed on /Users/UserId " } );
 		
 	} )
-	.put( ( req,res,next ) => {
+	.put( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 		User.findByIdAndUpdate( req.params.UserId,
 			{ $set : req.body } 
 			, { new : true } )
@@ -105,7 +96,7 @@ router.route( "/manage/:UserId" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.delete( ( req,res,next ) => {
+	.delete( authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
 
 		User.findByIdAndDelete( req.params.UserId )
 			.then( ( User ) => {
@@ -121,20 +112,17 @@ router.route( "/manage/:UserId" )
 		
 	} );
 
-router.post( "/signup",  ( req, res, next ) => {
-	User.register( new User( {  email:req.body.email ,name :req.body.name , role : req.body.role , } ), 
+router.post( "/signup", authenticate.verifyUser , authenticate.verifyAdmin , ( req, res, next ) => {
+	User.register( new User( {  email:req.body.email ,name :req.body.name , role : req.body.role  } ), 
 		req.body.password, ( err, user ) => {
 			if( err ) {
-				console.log( req.body.username , req.body.password );
 				res.statusCode = 500;
 				res.setHeader( "Content-Type", "application/json" );
 				res.json( { err: err } );
 			}
 			else {	
-				user.image = req.body.image;
 				user.save( ( err, user ) => {
 					if ( err ) {
-						console.log( "is it here ?" );
 						res.statusCode = 500;
 						res.setHeader( "Content-Type", "application/json" );
 						res.json( { err: err } );
@@ -152,7 +140,6 @@ router.post( "/signup",  ( req, res, next ) => {
 
 router.post( "/login",  passport.authenticate( "local" ) ,( req, res, next ) => {	
 
-	console.log( req.user._id );   
 	var token = authenticate.getToken( { _id: req.user._id } );
 	res.status( 200 );
 	res.setHeader( "Content-Type", "application/json" );

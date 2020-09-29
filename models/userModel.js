@@ -24,6 +24,7 @@ const UserSchema = new mongoose.Schema( {
 		default: "/public/default.png"
 	},
 	role: { 
+		required: true,
 		type: mongoose.Schema.Types.String,
 		ref: "role"
 	}
