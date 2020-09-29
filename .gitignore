@@ -62,3 +62,5 @@ typings/
 
 # Important files
 config.js
+server.cert 
+server.key
