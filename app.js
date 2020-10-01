@@ -6,14 +6,13 @@ var logger = require( "morgan" );
 const config = require( "./config" );
 const passport = require( "passport" );
 const mongoose = require( "mongoose" );
+const helmet = require( "helmet" );
 
 // MongoDB connection 
 
 mongoose.connect( config.DBUrl, { useNewUrlParser: true , useUnifiedTopology: true, useCreateIndex:true } )
 	.then( console.log( "Connected to the DB server Successfully!" ) )
 	.catch( ( err ) => console.log( err ) );
-
-
 //
 
 // Routers
@@ -24,11 +23,8 @@ const userRouter = require( "./routes/userRouter" );
 const uploadRouter = require( "./routes/uploadRouter" );
 
 
-
-
-
 var app = express();
-
+app.use( helmet() );
 
 // allow only https requests
 app.all( "*", ( req, res, next ) => {
@@ -60,9 +56,6 @@ app.use( "/users", userRouter );
 app.use( "/projects", projectRouter );
 app.use( "/roles", roleRouter );
 app.use( "/uploads", uploadRouter );
-
-
-
 
 
 // catch 404 and forward to error handler

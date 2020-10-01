@@ -95,7 +95,7 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 
 ##### Non-Functional
 - [x] Enable TLS/SSL.
-- [ ] Validate the input of users
+- [x] Validate the input of users
 - [x] Use Secured Session Cookies.
 - [ ] Prevent Brute-Force attack againsts forms.
 - [ ] Prevent CSRF attack.

@@ -3,9 +3,13 @@
 // Reequire 
 const express = require( "express" );
 const router = express.Router();
+const { v4: uuidv4 } = require( "uuid" );
+const config = require( "../config" );
 // middlewares
 
 const cors = require( "../middlewares/cors" );
+const { userValidation } = require( "../middlewares/validation" );
+
 
 // AUTHENTICATION 
 const authenticate = require( "../middlewares/authenticate" );
@@ -93,7 +97,7 @@ router.route( "/manage/:UserId" )
 		res.json( { error: "POST Method is not allowed on /Users/UserId " } );
 		
 	} )
-	.put( cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.put( cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, userValidation, ( req,res,next ) => {
 		User.findByIdAndUpdate( req.params.UserId,
 			{ $set : req.body } 
 			, { new : true } )
@@ -123,7 +127,7 @@ router.route( "/manage/:UserId" )
 router
 	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
 
-	.post( "/signup",  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin , ( req, res, next ) => {
+	.post( "/signup",  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin , userValidation ,( req, res, next ) => {
 		User.register( new User( {  email:req.body.email ,name :req.body.name , role : req.body.role  } ), 
 			req.body.password, ( err, user ) => {
 				if( err ) {
@@ -147,6 +151,52 @@ router
 					} );
 				}
 			} );
+	} );
+
+router
+	.options( cors.corsWithOptions, ( req,res ) => { res.status( 200 ); } )
+
+	.post( "/init",   cors.corsWithOptions,( req, res, next ) => {	
+
+		
+		User.findOne( { superuser: true } )
+			.then( ( user ) => {
+				console.log( user );
+				if ( user != null ) {
+					res.status( 200 );
+					res.setHeader( "Content-Type","application/json" );
+					res.json( { message: "OK" } );
+				}
+				else {
+					User.register( new User( {  email:config.adminEmail , name : config.adminName , role : "1" , superuser: true } ), 
+						config.adminPass , ( err, user ) => {
+							if( err ) {
+								res.statusCode = 500;
+								res.setHeader( "Content-Type", "application/json" );
+								res.json( { err: err } );
+							}
+							else {	
+								user.save( ( err, user ) => {
+									if ( err ) {
+										res.statusCode = 500;
+										res.setHeader( "Content-Type", "application/json" );
+										res.json( { err: err } );
+										return ;
+									}
+					
+									res.statusCode = 200;
+									res.setHeader( "Content-Type", "application/json" );
+									res.json( { success: true, status: " Intiliazed!" } );
+					
+								} );
+							}
+						} );
+				}
+
+		
+			} )
+			.catch( ( err ) => next( err ) );
+	
 	} );
 
 router

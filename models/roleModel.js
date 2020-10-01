@@ -16,6 +16,7 @@ const RoleSchema = new mongoose.Schema( {
 	},
 	abbr: {
 		type: String,
+		unique: true
 	},
 	
 } , { timestamps: true } );

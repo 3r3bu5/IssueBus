@@ -5,6 +5,8 @@ const express = require( "express" );
 const router = express.Router();
 const authenticate = require( "../middlewares/authenticate" );
 const cors = require( "../middlewares/cors" );
+const Joi = require( "joi" ); 
+const { roleValidation } = require( "../middlewares/validation" );
 
 // require models
 
@@ -37,7 +39,7 @@ router.route( "/" )
 			} )
 			.catch( ( err ) => next( err ) );
 	} )
-	.post(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, ( req,res,next ) => {
+	.post(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, roleValidation ,( req,res,next ) => {
 		Role.create( req.body )
 			.then( ( Role ) => {
 				res.status( 200 );
@@ -92,8 +94,8 @@ router.route( "/:RoleId" )
 		res.json( { error: "POST Method is not allowed on /Roles/RoleId " } );
 		
 	} )
-	.put(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin,( req,res,next ) => {
-		Role.findById( req.params.RoleId,
+	.put(  cors.corsWithOptions, authenticate.verifyUser , authenticate.verifyAdmin, roleValidation, ( req,res,next ) => {
+		Role.findByIdAndUpdate( req.params.RoleId,
 			{ $set : req.body } 
 			, { new : true } )
 			.then( ( Role ) => {
