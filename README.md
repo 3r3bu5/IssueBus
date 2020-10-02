@@ -76,6 +76,14 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 - [x] UserRouter
 - [x] CommentRouter
 - [x] UploadRouter
+###### Controllers
+- [x] ProjectCtrl
+- [x] VersionCtrl
+- [x] IssueCtrl
+- [x] RoleCtrl
+- [x] UserCtrl
+- [x] CommentCtrl
+- [x] UploadCtrl
 ###### Views
 - [ ] ProjectView
 - [ ] IssueView
@@ -88,8 +96,8 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 - [x] Allow only admin to assign users to tickets.
 ###### Global
 - [x] CORS
-- [ ] Upload Users' photos to AWS instead of local storage.
-- [ ] Use statastics charts 
+- [ ] Upload Users' photos to Cloud instead of local storage.
+- [ ] Use statastics charts (view phase)
 - [x] Use UUID to generate random Ids instead of node default objectId
 
 
@@ -98,6 +106,6 @@ Here is a link to the API Documentation (v1) : [https://app.swaggerhub.com/apis-
 - [x] Validate the input of users
 - [x] Use Secured Session Cookies.
 - [ ] Prevent Brute-Force attack againsts forms.
-- [ ] Prevent CSRF attack.
+- [x] ~~Prevent CSRF attack.~~  Since there are no cookies there is no CSRF(I HOPE).
 - [x] Use HelmetJs for basic security defaults.
-- [ ] Add Rate Limiting (Maybe)? .
+- [ ] Add Rate Limiting (Maybe)?.
